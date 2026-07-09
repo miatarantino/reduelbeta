@@ -50,6 +50,10 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 .swatch.sel{border-color:var(--txt)}
 .swatch span{flex:1}
 #toast{position:fixed;bottom:78px;left:50%;transform:translateX(-50%);background:var(--panel2);color:var(--txt);border:1px solid var(--line);padding:10px 18px;border-radius:12px;font-size:13px;z-index:20;display:none;max-width:90%;text-align:center}
+#tut{position:fixed;inset:0;z-index:30;background:var(--bg);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 26px calc(30px + var(--tg-safe-area-inset-bottom,0px));gap:16px}
+#tut .ticon{width:84px;height:84px;border-radius:50%;background:var(--panel);display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--y)}
+.tdot{width:8px;height:8px;border-radius:50%;background:var(--panel2);display:inline-block;margin:0 3px}
+.tdot.on{background:var(--gold)}
 .spin{width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--y);border-radius:50%;margin:0 auto;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .fd{font-size:12px;color:var(--mut);text-align:center;min-height:26px;overflow:hidden;transition:opacity .25s;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}
@@ -69,6 +73,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 <div id="top" style="display:none">
   <div class="logo">RE<span>DUEL</span></div>
   <div class="row" style="gap:2px">
+    <button id="hlpBtn" class="icoBtn" aria-label="help"><i class="ti ti-help-circle"></i></button>
     <button id="sndBtn" class="icoBtn" aria-label="sound"><i id="sndIco" class="ti ti-volume"></i></button>
     <button id="profBtn" class="icoBtn" aria-label="profile"><i class="ti ti-user"></i></button>
     <div id="topBal">$0.00</div>
@@ -397,6 +402,15 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
 </nav>
 
 <div id="toast"></div>
+
+<div id="tut">
+  <div class="ticon"><i id="tutIco" class="ti ti-swords"></i></div>
+  <div id="tutT" style="font-size:20px;font-weight:800">—</div>
+  <div id="tutD" class="mut" style="font-size:14px;line-height:1.7;max-width:320px">—</div>
+  <div id="tutDots"></div>
+  <button class="btn btn-y" id="tutNext" style="max-width:300px">—</button>
+  <button id="tutSkip" style="background:none;border:none;color:var(--mut);font-size:12px;text-decoration:underline;cursor:pointer">—</button>
+</div>
 </div>
 <script>
 (function(){
@@ -406,7 +420,12 @@ var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s
 
 var I={
 ru:{reg_tag:'Дуэли прогнозов 1 на 1.<br>24 секунды. Соперник. Банк победителю.',reg_lang:'Язык',reg_nick:'Твой ник',reg_nick_hint:'Латиница, цифры, точка и _ (3–14 символов)',reg_color:'Цвет твоей стороны',reg_go:'Начать',reg_disc:'Демо-версия: все средства виртуальные.<br>18+. Играй ответственно — лимиты в профиле.',nick_err:'Ник: латиница, цифры, точка, _ (3–14 символов)',welcome:'Добро пожаловать, {n}! Пополни баланс и в бой',
-balance:'баланс',demo:'ДЕМО',avail:'доступно',dep:'Депозит',wd:'Вывод',fight:'В БОЙ',call_friend:'Позвать друзей',last_games:'Последние бои',invite_play:'Позвать в REDUEL',ch_friend:'Пригласить друга в эту дуэль',chal_bet:'Вызов от {n} · ставка {b} — прими или поменяй',tg_join:'Залетай в REDUEL — дуэли прогнозов 1 на 1!',top_week:'Топ недели',live:'Живые дуэли',records:'Рекорды дня',streak_w:'подряд',bigwin_w:'занос',online:'в онлайне',duels_w:'дуэлей',friends_w:'друзей',
+balance:'баланс',demo:'ДЕМО',avail:'доступно',dep:'Депозит',wd:'Вывод',fight:'В БОЙ',call_friend:'Позвать друзей',last_games:'Последние бои',invite_play:'Позвать в REDUEL',ch_friend:'Пригласить друга в эту дуэль',chal_bet:'Вызов от {n} · ставка {b} — прими или поменяй',tg_join:'Залетай в REDUEL — дуэли прогнозов 1 на 1!',
+tut1t:'Дуэль 1 на 1',tut1d:'Ты против живого соперника. Выбери ставку и сторону — вверх или вниз пойдёт линия за 24 секунды. Соперник получает противоположную.',
+tut2t:'Победитель забирает банк',tut2d:'Обе ставки складываются в банк. Чья сторона сыграла — забирает всё, минус наша комиссия 5%. Мы не играем против тебя: комиссию получаем при любом исходе, нам безразлично, кто победит.',
+tut3t:'Честность можно проверить',tut3d:'Линия раунда создаётся ДО твоей ставки. Перед боем мы показываем её криптографический отпечаток (хэш), после боя раскрываем секрет — подкрутить результат невозможно. Ничья — обе ставки возвращаются.',
+tut4t:'Расти и зови друзей',tut4d:'Побеждай подряд — собирай серии. Поднимайся из Bronze в GM. Вызывай друзей и ломай чужие рекорды. Это демо-версия: все деньги виртуальные.',
+tut_next:'Дальше',tut_go:'Понятно — в бой!',tut_skip:'пропустить',top_week:'Топ недели',live:'Живые дуэли',records:'Рекорды дня',streak_w:'подряд',bigwin_w:'занос',online:'в онлайне',duels_w:'дуэлей',friends_w:'друзей',
 skills:'Навыки и стиль',sk_sh_n:'Щит серии',sk_sh_d:'— поражение не сжигает серию',sk_gold_n:'Линия Gold Rush',sk_neon_n:'Линия Neon Ghost',sk_skin_d:'— твой стиль видят соперники',sk_emo_n:'Эмоции',sk_emo_d:'— дразни соперника в бою',equip:'надеть',equipped:'надета',owned:'куплено',bought:'Покупка успешна',no_funds:'Не хватает баланса',
 bank:'банк',you_lead:'ТЫ ВЕДЁШЬ',leads:'ВЕДЁТ',duel:'Дуэль',duel_sub:'Ставка и линия. Сторону выберешь, когда увидишь соперника',find_opp:'Найти соперника',opp_tend:'{n} берёт ВВЕРХ в {p}% дуэлей',blind_t:'Выбери сторону втайне —',both_picked:'Оба выбрали {s} — жребий!',counter_ok:'Стороны разошлись — чистый контрпик!',you_got:'Тебе выпало: {s}',pick_to:'Время вышло — бой не начался, ставка не списана',retry_pick:'Выбрать ещё раз',line_lbl:'линия:',l_calm:'спокойная',l_classic:'классическая',l_wild:'дикая',up:'Вверх',down:'Вниз',my_sk:'твои навыки:',
 search:'Подбираем соперника…',side_up:'вверх',side_down:'вниз',found:'Соперник найден',change_opp:'сменить соперника',hash_wait:'хэш раунда: вычисляем…',hash_line:'хэш раунда: {h}… — сид раскроем после боя',hash_na:'provably fair недоступен в этом окружении (нужен https)',new_opp:'Новый соперник: {n}',busy_duel:'Бой уже идёт — сначала закончи его',
@@ -417,7 +436,12 @@ cur_streak:'текущая серия',rec_streak:'рекорд серии',best
 network:'Сеть',amount:'Сумма',amount_ph:'своя',addr_lbl:'Адрес для перевода',paid:'Я оплатил',dep_note:'Демо-режим: средства зачислятся мгновенно без реального перевода',wd_min:'Сумма (минимум $10)',wd_addr:'Адрес кошелька',wd_go:'Вывести',kyc_note:'В реальной версии перед первым выводом — верификация (KYC)',tx_hist:'История операций',tx_none:'Операций пока нет',st_done:'выполнено',st_proc:'в обработке',tx_dep:'депозит (демо)',tx_wd:'вывод на {a}…',min_wd:'Минимальный вывод — $10',need_addr:'Укажи адрес кошелька',wd_created:'Заявка на вывод создана',wd_done:'Вывод {a} выполнен (демо)',added:'зачислено (демо)',copied:'Скопировано',link_copied:'Ссылка скопирована — зови друзей',chal_copied:'Вызов скопирован — кидай в чат',chal_txt:'Вызываю тебя на дуэль в REDUEL!',addr_copied:'Адрес скопирован',no_bal:'Не хватает баланса — пополни депозит',
 f_win:'{n} выиграл ${a} у {m}',f_ser:'{n} — {s} побед подряд',f_clutch:'клатч-камбэк: {n} вырвал на последней секунде',f_online:'в онлайне {a} дуэлянтов',f_rec:'рекорд дня: LUNA — 14 подряд',t_chal:'вызвать',t_fr:'в друзья'},
 uk:{reg_tag:'Дуелі прогнозів 1 на 1.<br>24 секунди. Суперник. Банк переможцю.',reg_lang:'Мова',reg_nick:'Твій нік',reg_nick_hint:'Латиниця, цифри, крапка та _ (3–14 символів)',reg_color:'Колір твоєї сторони',reg_go:'Почати',reg_disc:'Демо-версія: усі кошти віртуальні.<br>18+. Грай відповідально — ліміти в профілі.',nick_err:'Нік: латиниця, цифри, крапка, _ (3–14 символів)',welcome:'Вітаємо, {n}! Поповни баланс і до бою',
-balance:'баланс',demo:'ДЕМО',avail:'доступно',dep:'Депозит',wd:'Виведення',fight:'ДО БОЮ',call_friend:'Покликати друзів',last_games:'Останні бої',invite_play:'Покликати в REDUEL',ch_friend:'Запросити друга на цю дуель',chal_bet:'Виклик від {n} · ставка {b} — прийми або зміни',tg_join:'Залітай у REDUEL — дуелі прогнозів 1 на 1!',top_week:'Топ тижня',live:'Живі дуелі',records:'Рекорди дня',streak_w:'поспіль',bigwin_w:'занос',online:'в онлайні',duels_w:'дуелей',friends_w:'друзів',
+balance:'баланс',demo:'ДЕМО',avail:'доступно',dep:'Депозит',wd:'Виведення',fight:'ДО БОЮ',call_friend:'Покликати друзів',last_games:'Останні бої',invite_play:'Покликати в REDUEL',ch_friend:'Запросити друга на цю дуель',chal_bet:'Виклик від {n} · ставка {b} — прийми або зміни',tg_join:'Залітай у REDUEL — дуелі прогнозів 1 на 1!',
+tut1t:'Дуель 1 на 1',tut1d:'Ти проти живого суперника. Обери ставку і сторону — вгору чи вниз піде лінія за 24 секунди. Суперник отримує протилежну.',
+tut2t:'Переможець забирає банк',tut2d:'Обидві ставки складаються в банк. Чия сторона зіграла — забирає все, мінус наша комісія 5%. Ми не граємо проти тебе: комісію отримуємо за будь-якого результату, нам байдуже, хто переможе.',
+tut3t:'Чесність можна перевірити',tut3d:'Лінія раунду створюється ДО твоєї ставки. Перед боєм ми показуємо її криптографічний відбиток (хеш), після бою розкриваємо секрет — підкрутити результат неможливо. Нічия — обидві ставки повертаються.',
+tut4t:'Рости і клич друзів',tut4d:'Перемагай поспіль — збирай серії. Піднімайся з Bronze у GM. Викликай друзів і ламай чужі рекорди. Це демо-версія: всі кошти віртуальні.',
+tut_next:'Далі',tut_go:'Зрозуміло — до бою!',tut_skip:'пропустити',top_week:'Топ тижня',live:'Живі дуелі',records:'Рекорди дня',streak_w:'поспіль',bigwin_w:'занос',online:'в онлайні',duels_w:'дуелей',friends_w:'друзів',
 skills:'Навички та стиль',sk_sh_n:'Щит серії',sk_sh_d:'— поразка не спалює серію',sk_gold_n:'Лінія Gold Rush',sk_neon_n:'Лінія Neon Ghost',sk_skin_d:'— твій стиль бачать суперники',sk_emo_n:'Емоції',sk_emo_d:'— дражни суперника в бою',equip:'одягти',equipped:'одягнена',owned:'куплено',bought:'Покупка успішна',no_funds:'Не вистачає балансу',
 bank:'банк',you_lead:'ТИ ВЕДЕШ',leads:'ВЕДЕ',duel:'Дуель',duel_sub:'Ставка і лінія. Сторону обереш, коли побачиш суперника',find_opp:'Знайти суперника',opp_tend:'{n} бере ВГОРУ в {p}% дуелей',blind_t:'Обери сторону втаємно —',both_picked:'Обидва обрали {s} — жереб!',counter_ok:'Сторони розійшлися — чистий контрпік!',you_got:'Тобі випало: {s}',pick_to:'Час вийшов — бій не почався, ставку не списано',retry_pick:'Обрати ще раз',line_lbl:'лінія:',l_calm:'спокійна',l_classic:'класична',l_wild:'дика',up:'Вгору',down:'Вниз',my_sk:'твої навички:',
 search:'Підбираємо суперника…',side_up:'вгору',side_down:'вниз',found:'Суперника знайдено',change_opp:'змінити суперника',hash_wait:'хеш раунду: обчислюємо…',hash_line:'хеш раунду: {h}… — сід розкриємо після бою',hash_na:'provably fair недоступний у цьому середовищі (потрібен https)',new_opp:'Новий суперник: {n}',busy_duel:'Бій уже триває — спочатку закінчи його',
@@ -428,7 +452,12 @@ cur_streak:'поточна серія',rec_streak:'рекорд серії',best
 network:'Мережа',amount:'Сума',amount_ph:'своя',addr_lbl:'Адреса для переказу',paid:'Я сплатив',dep_note:'Демо-режим: кошти зарахуються миттєво без реального переказу',wd_min:'Сума (мінімум $10)',wd_addr:'Адреса гаманця',wd_go:'Вивести',kyc_note:'У реальній версії перед першим виведенням — верифікація (KYC)',tx_hist:'Історія операцій',tx_none:'Операцій поки немає',st_done:'виконано',st_proc:'в обробці',tx_dep:'депозит (демо)',tx_wd:'виведення на {a}…',min_wd:'Мінімальне виведення — $10',need_addr:'Вкажи адресу гаманця',wd_created:'Заявку на виведення створено',wd_done:'Виведення {a} виконано (демо)',added:'зараховано (демо)',copied:'Скопійовано',link_copied:'Посилання скопійовано — клич друзів',chal_copied:'Виклик скопійовано — кидай у чат',chal_txt:'Викликаю тебе на дуель у REDUEL!',addr_copied:'Адресу скопійовано',no_bal:'Не вистачає балансу — поповни депозит',
 f_win:'{n} виграв ${a} у {m}',f_ser:'{n} — {s} перемог поспіль',f_clutch:'клатч-камбек: {n} вирвав на останній секунді',f_online:'в онлайні {a} дуелянтів',f_rec:'рекорд дня: LUNA — 14 поспіль',t_chal:'викликати',t_fr:'в друзі'},
 en:{reg_tag:'1v1 prediction duels.<br>24 seconds. An opponent. Winner takes the pot.',reg_lang:'Language',reg_nick:'Your nickname',reg_nick_hint:'Letters, digits, dot and _ (3–14 chars)',reg_color:'Your side color',reg_go:'Start',reg_disc:'Demo version: all funds are virtual.<br>18+. Play responsibly — limits in profile.',nick_err:'Nickname: letters, digits, dot, _ (3–14 chars)',welcome:'Welcome, {n}! Top up and fight',
-balance:'balance',demo:'DEMO',avail:'available',dep:'Deposit',wd:'Withdraw',fight:'FIGHT',call_friend:'Invite friends',last_games:'Recent duels',invite_play:'Invite to REDUEL',ch_friend:'Invite a friend to this duel',chal_bet:'Challenge from {n} · stake {b} — accept or change',tg_join:'Join REDUEL — 1v1 prediction duels!',top_week:'Weekly top',live:'Live duels',records:'Daily records',streak_w:'in a row',bigwin_w:'big win',online:'online now',duels_w:'duels',friends_w:'friends',
+balance:'balance',demo:'DEMO',avail:'available',dep:'Deposit',wd:'Withdraw',fight:'FIGHT',call_friend:'Invite friends',last_games:'Recent duels',invite_play:'Invite to REDUEL',ch_friend:'Invite a friend to this duel',chal_bet:'Challenge from {n} · stake {b} — accept or change',tg_join:'Join REDUEL — 1v1 prediction duels!',
+tut1t:'1v1 duel',tut1d:'You against a real opponent. Pick your stake and side — will the line go up or down in 24 seconds. Your opponent gets the opposite side.',
+tut2t:'Winner takes the pot',tut2d:'Both stakes form the pot. The winning side takes it all, minus our 5% fee. We never play against you: we get the fee whatever the outcome, so we don\'t care who wins.',
+tut3t:'Fairness you can verify',tut3d:'The round line is created BEFORE your bet. We show its cryptographic fingerprint (hash) before the fight and reveal the secret after — rigging is impossible. A tie returns both stakes.',
+tut4t:'Climb and invite friends',tut4d:'Win in a row — build streaks. Rise from Bronze to GM. Challenge friends and break their records. This is a demo: all funds are virtual.',
+tut_next:'Next',tut_go:'Got it — fight!',tut_skip:'skip',top_week:'Weekly top',live:'Live duels',records:'Daily records',streak_w:'in a row',bigwin_w:'big win',online:'online now',duels_w:'duels',friends_w:'friends',
 skills:'Skills and style',sk_sh_n:'Streak shield',sk_sh_d:'— a loss won\'t burn your streak',sk_gold_n:'Gold Rush line',sk_neon_n:'Neon Ghost line',sk_skin_d:'— opponents see your style',sk_emo_n:'Emotes',sk_emo_d:'— taunt your opponent mid-fight',equip:'equip',equipped:'equipped',owned:'owned',bought:'Purchased',no_funds:'Not enough balance',
 bank:'pot',you_lead:'YOU LEAD',leads:'LEADS',duel:'Duel',duel_sub:'Stake and line. Pick your side once you see the opponent',find_opp:'Find opponent',opp_tend:'{n} picks UP in {p}% of duels',blind_t:'Pick your side secretly —',both_picked:'Both picked {s} — coin flip!',counter_ok:'Sides differ — clean counter-pick!',you_got:'You got: {s}',pick_to:'Time is up — the duel did not start, no stake taken',retry_pick:'Pick again',line_lbl:'line:',l_calm:'calm',l_classic:'classic',l_wild:'wild',up:'Up',down:'Down',my_sk:'your skills:',
 search:'Finding an opponent…',side_up:'up',side_down:'down',found:'Opponent found',change_opp:'change opponent',hash_wait:'round hash: computing…',hash_line:'round hash: {h}… — seed revealed after the fight',hash_na:'provably fair unavailable here (needs https)',new_opp:'New opponent: {n}',busy_duel:'A duel is in progress — finish it first',
@@ -446,8 +475,8 @@ function applyLang(){document.documentElement.lang=S.lang;
   $('dCust').placeholder=t('amount_ph');$('depCust').placeholder=t('amount_ph');
   sndIco();updSkills();save()}
 
-var S={reg:false,nick:'',theme:0,lang:'ru',snd:true,bal:0,elo:1000,streak:0,rec:0,wins:0,losses:0,best:0,hist:[],tx:[],ref:'',refBy:'',friends:[],freq:[],sk:{sh:0},skins:{gold:false,neon:false},skin:'none',emo:false};
-var BOT='Reduelbeta_bot',APP_V='0.9.7';
+var S={reg:false,nick:'',theme:0,lang:'ru',snd:true,tut:false,bal:0,elo:1000,streak:0,rec:0,wins:0,losses:0,best:0,hist:[],tx:[],ref:'',refBy:'',friends:[],freq:[],sk:{sh:0},skins:{gold:false,neon:false},skin:'none',emo:false};
+var BOT='Reduelbeta_bot',APP_V='0.9.8';
 function save(){try{localStorage.setItem('reduel_v2',JSON.stringify(S))}catch(e){}cloudSave()}
 var cloudT=null;
 function cloudSave(){try{var tw=window.Telegram&&window.Telegram.WebApp;
@@ -526,7 +555,24 @@ function boot(){applyLang();
   $('s-reg').classList.remove('on');$('top').style.display='flex';$('nav').style.display='flex';
   applyTheme(S.theme);setBal();sndIco();
   $('dMyNick').textContent=S.nick;$('dMyAv').textContent=S.nick.slice(0,2).toUpperCase();
-  $('dMySub').textContent=divName(S.elo);nav(scr)}
+  $('dMySub').textContent=divName(S.elo);nav(scr);
+  if(!S.tut)showTut()}
+var TUT=[['ti-swords','tut1t','tut1d'],['ti-trophy','tut2t','tut2d'],['ti-shield-check','tut3t','tut3d'],['ti-flame','tut4t','tut4d']];
+var tutI=0;
+function showTut(){tutI=0;renderTut();$('tut').style.display='flex'}
+function renderTut(){var s=TUT[tutI];
+  $('tutIco').className='ti '+s[0];
+  $('tutT').textContent=t(s[1]);$('tutD').textContent=t(s[2]);
+  var d='';for(var i=0;i<TUT.length;i++)d+='<span class="tdot'+(i===tutI?' on':'')+'"></span>';
+  $('tutDots').innerHTML=d;
+  $('tutNext').innerHTML=tutI<TUT.length-1?t('tut_next'):t('tut_go');
+  $('tutSkip').textContent=t('tut_skip');
+  $('tutSkip').style.visibility=tutI<TUT.length-1?'visible':'hidden'}
+function closeTut(){$('tut').style.display='none';
+  if(!S.tut){S.tut=true;save();track('прошёл онбординг')}}
+$('tutNext').onclick=function(){if(tutI<TUT.length-1){tutI++;renderTut()}else closeTut()};
+$('tutSkip').onclick=closeTut;
+$('hlpBtn').onclick=showTut;
 $('regGo').onclick=function(){var n=$('regNick').value.trim();
   if(!/^[A-Za-z0-9._]{3,14}$/.test(n)){toast(t('nick_err'));return}
   S.reg=true;S.nick=n;S.ref='t.me/'+BOT+'?startapp='+n.toLowerCase();
