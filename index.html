@@ -11,8 +11,8 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{background:#07090F}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--txt)}
-#app{max-width:420px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:66px}
-#top{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;position:sticky;top:0;background:var(--bg);z-index:5;border-bottom:1px solid var(--line)}
+#app{max-width:420px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:66px;padding-top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px))}
+#top{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;position:sticky;top:calc(var(--tg-safe-area-inset-top,0px) + var(--tg-content-safe-area-inset-top,0px));background:var(--bg);z-index:5;border-bottom:1px solid var(--line)}
 #top .logo{font-size:17px;font-weight:800;letter-spacing:1px}
 #top .logo span{color:var(--y)}
 .icoBtn{background:none;border:none;color:var(--mut);font-size:19px;padding:4px 6px;cursor:pointer}
@@ -446,7 +446,7 @@ function applyLang(){document.documentElement.lang=S.lang;
   sndIco();updSkills();save()}
 
 var S={reg:false,nick:'',theme:0,lang:'ru',snd:true,bal:0,elo:1000,streak:0,rec:0,wins:0,losses:0,best:0,hist:[],tx:[],ref:'',refBy:'',friends:[],freq:[],sk:{sh:0},skins:{gold:false,neon:false},skin:'none',emo:false};
-var BOT='Reduelbeta_bot',APP_V='0.9.5';
+var BOT='Reduelbeta_bot',APP_V='0.9.6';
 function save(){try{localStorage.setItem('reduel_v2',JSON.stringify(S))}catch(e){}cloudSave()}
 var cloudT=null;
 function cloudSave(){try{var tw=window.Telegram&&window.Telegram.WebApp;
@@ -952,7 +952,8 @@ function renderTx(){setBal();
   $('txList').innerHTML=h}
 
 var names=['ALINA','MAX_W','LIRA','DANTE','KOT_9','MURA','ZED','FURY','LUNA','GROM'];
-function feedMsg(){var n=names[Math.floor(Math.random()*names.length)],m=names[Math.floor(Math.random()*names.length)],r=Math.random(),txt;
+function feedMsg(){var n=names[Math.floor(Math.random()*names.length)],m=n,r=Math.random(),txt;
+  while(m===n)m=names[Math.floor(Math.random()*names.length)];
   if(r<0.3)txt=t('f_win',{n:n,a:Math.floor(Math.random()*140)+8,m:m});
   else if(r<0.55)txt=t('f_ser',{n:n,s:Math.floor(Math.random()*12)+2});
   else if(r<0.7)txt=t('f_clutch',{n:n});
@@ -982,6 +983,12 @@ function applyPending(){if(PEND.ch&&S.reg){var c=PEND.ch,b=PEND.bet;
 try{var tw=window.Telegram&&window.Telegram.WebApp;
   if(tw&&tw.initDataUnsafe&&tw.initData){
     tw.ready();tw.expand();
+    function safePad(){try{
+      var s=(tw.safeAreaInset&&tw.safeAreaInset.top)||0,c=(tw.contentSafeAreaInset&&tw.contentSafeAreaInset.top)||0;
+      if(s+c>0){document.getElementById('app').style.paddingTop=(s+c)+'px';
+        document.getElementById('top').style.top=(s+c)+'px'}}catch(e){}}
+    safePad();
+    if(tw.onEvent){tw.onEvent('safeAreaChanged',safePad);tw.onEvent('contentSafeAreaChanged',safePad);tw.onEvent('fullscreenChanged',safePad)}
     if(tw.setHeaderColor)tw.setHeaderColor('#0B0F1A');
     if(tw.setBackgroundColor)tw.setBackgroundColor('#07090F');
     if(tw.enableClosingConfirmation)tw.enableClosingConfirmation();
