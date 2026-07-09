@@ -442,7 +442,15 @@ function applyLang(){document.documentElement.lang=S.lang;
 
 var S={reg:false,nick:'',theme:0,lang:'ru',snd:true,bal:0,elo:1000,streak:0,rec:0,wins:0,losses:0,best:0,hist:[],tx:[],ref:'',refBy:'',friends:[],freq:[],sk:{sh:0},skins:{gold:false,neon:false},skin:'none',emo:false};
 var BOT='Reduelbeta_bot';
-function save(){try{localStorage.setItem('reduel_v2',JSON.stringify(S))}catch(e){}}
+function save(){try{localStorage.setItem('reduel_v2',JSON.stringify(S))}catch(e){}cloudSave()}
+var cloudT=null;
+function cloudSave(){try{var tw=window.Telegram&&window.Telegram.WebApp;
+  if(!(tw&&tw.CloudStorage&&tw.initData))return;
+  clearTimeout(cloudT);
+  cloudT=setTimeout(function(){try{
+    var c=JSON.parse(JSON.stringify(S));
+    c.hist=c.hist.slice(0,10);c.tx=c.tx.slice(0,10);
+    tw.CloudStorage.setItem('reduel',JSON.stringify(c),function(){})}catch(e){}},800)}catch(e){}}
 function load(){try{var d=localStorage.getItem('reduel_v2');if(d){var p=JSON.parse(d);for(var k in S)if(p[k]!==undefined)S[k]=p[k]}}catch(e){}}
 load();
 
@@ -951,7 +959,14 @@ try{var tw=window.Telegram&&window.Telegram.WebApp;
       else if(sp.toLowerCase()!==(S.nick||'').toLowerCase()){
         if(!S.refBy){S.refBy=sp.toUpperCase();save();
           track('пришёл по рефералке от '+sp)}}}
-    track('открыл через Telegram mini app')}}catch(e){}
+    track('открыл через Telegram mini app');
+    if(tw.CloudStorage)tw.CloudStorage.getItem('reduel',function(err,val){
+      if(err||!val)return;
+      try{var p=JSON.parse(val);
+        if(p.reg&&(!S.reg||(p.wins+p.losses)>=(S.wins+S.losses))){
+          for(var k in S)if(p[k]!==undefined)S[k]=p[k];
+          try{localStorage.setItem('reduel_v2',JSON.stringify(S))}catch(e2){}
+          boot();applyPending()}}catch(e3){}})}}catch(e){}
 updBank();
 boot();
 applyPending();
