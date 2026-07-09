@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>REDUEL</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.30.0/dist/tabler-icons.min.css">
+<style>
+:root{--bg:#0B0F1A;--panel:#141B2D;--panel2:#1A2338;--line:#222D47;--mut:#8A93A6;--txt:#EDF1F7;--gold:#FFC94D;--goldD:#412402;--y:#2FE0C8;--yD:#04342C;--yBg:#0F3B36;--o:#F45E93;--oD:#4B1528;--oBg:#421A2C}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:#07090F}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--txt)}
+#app{max-width:420px;margin:0 auto;min-height:100vh;background:var(--bg);position:relative;padding-bottom:66px}
+#top{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;position:sticky;top:0;background:var(--bg);z-index:5;border-bottom:1px solid var(--line)}
+#top .logo{font-size:17px;font-weight:800;letter-spacing:1px}
+#top .logo span{color:var(--y)}
+.icoBtn{background:none;border:none;color:var(--mut);font-size:19px;padding:4px 6px;cursor:pointer}
+#topBal{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:6px 12px;font-size:13px;color:var(--gold);font-weight:600;cursor:pointer}
+.scr{display:none;padding:16px 14px 20px}
+.scr.on{display:block}
+#nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;display:flex;background:#0E1424;border-top:1px solid var(--line);z-index:8;align-items:stretch}
+#nav button{flex:1;background:none;border:none;color:var(--mut);padding:12px 0;cursor:pointer;font-size:22px}
+#nav button.on{color:var(--y)}
+#nav .navc{font-size:15px;font-weight:800;letter-spacing:1.5px;color:var(--txt)}
+#nav .navc.on{color:var(--gold)}
+.card{background:var(--panel);border-radius:14px;padding:14px;margin-bottom:12px}
+.btn{display:block;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;text-align:center;width:100%}
+.btn-y{background:var(--y);color:var(--yD)}
+.btn-o{background:var(--o);color:var(--oD)}
+.btn-gold{background:var(--gold);color:var(--goldD)}
+.btn-dim{background:var(--panel2);color:var(--txt)}
+.chip{background:var(--panel2);color:var(--txt);border:1px solid var(--panel2);padding:7px 12px;border-radius:9px;font-size:13px;cursor:pointer}
+.chip.sel{border-color:var(--gold);color:var(--gold);font-weight:600}
+.mut{color:var(--mut)}
+.sec{font-size:12px;color:var(--mut);margin:14px 2px 6px}
+input,select{background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--txt);padding:11px 12px;font-size:14px;width:100%;outline:none}
+input:focus{border-color:var(--y)}
+input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.row{display:flex;gap:8px;align-items:center}
+.spread{display:flex;justify-content:space-between;align-items:center}
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700}
+.listrow{display:flex;justify-content:space-between;align-items:center;background:var(--panel);border-radius:11px;padding:10px 12px;font-size:13px;margin-bottom:6px;gap:8px}
+.badge{font-size:10px;padding:2px 7px;border-radius:8px;background:var(--panel2);color:var(--mut)}
+.stat{flex:1;background:var(--panel);border-radius:11px;padding:10px;text-align:center}
+.stat b{font-size:17px;font-weight:600;color:var(--gold);display:block}
+.stat span{font-size:10px;color:var(--mut)}
+.swatch{width:42px;height:26px;border-radius:9px;border:2px solid transparent;padding:0;overflow:hidden;display:flex;cursor:pointer}
+.swatch.sel{border-color:var(--txt)}
+.swatch span{flex:1}
+#toast{position:fixed;bottom:78px;left:50%;transform:translateX(-50%);background:var(--panel2);color:var(--txt);border:1px solid var(--line);padding:10px 18px;border-radius:12px;font-size:13px;z-index:20;display:none;max-width:90%;text-align:center}
+.spin{width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--y);border-radius:50%;margin:0 auto;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.fd{font-size:12px;color:var(--mut);text-align:center;min-height:26px;overflow:hidden;transition:opacity .25s;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}
+.fd .fb,.listrow .fb{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:7px;padding:2px 7px;font-size:11px;cursor:pointer}
+.hash{font-family:ui-monospace,Menlo,monospace;font-size:10px;color:var(--mut);word-break:break-all}
+.em{background:var(--panel2);border:1px solid var(--line);color:var(--gold);border-radius:10px;padding:8px 14px;font-size:18px;cursor:pointer}
+.emfx{position:absolute;font-size:54px;color:var(--gold);display:none;z-index:3;animation:pop .9s ease}
+@keyframes pop{0%{transform:scale(.3);opacity:0}25%{transform:scale(1.2);opacity:1}80%{opacity:1}100%{transform:scale(1);opacity:0}}
+.dv{flex:1;text-align:center;font-size:10px;padding:6px 2px;border-radius:8px;background:var(--panel);color:var(--mut);border:1px solid transparent;cursor:pointer}
+.dv.mine{border-color:var(--y)}
+.dv.sel{background:var(--gold);color:var(--goldD);font-weight:700}
+</style>
+</head>
+<body>
+<div id="app">
+
+<div id="top" style="display:none">
+  <div class="logo">RE<span>DUEL</span></div>
+  <div class="row" style="gap:2px">
+    <button id="sndBtn" class="icoBtn" aria-label="sound"><i id="sndIco" class="ti ti-volume"></i></button>
+    <button id="profBtn" class="icoBtn" aria-label="profile"><i class="ti ti-user"></i></button>
+    <div id="topBal">$0.00</div>
+  </div>
+</div>
+
+<div id="s-reg" class="scr">
+  <div style="text-align:center;padding:40px 10px 20px">
+    <div style="font-size:34px;font-weight:800;letter-spacing:2px">RE<span style="color:var(--y)">DUEL</span></div>
+    <div class="mut" style="font-size:14px;margin-top:8px;line-height:1.5" data-i="reg_tag"></div>
+  </div>
+  <div class="card">
+    <div class="sec" style="margin-top:0" data-i="reg_lang"></div>
+    <div class="row" id="regLangs">
+      <button class="chip lng sel" data-l="ru">Рус</button>
+      <button class="chip lng" data-l="uk">Укр</button>
+      <button class="chip lng" data-l="en">Eng</button>
+    </div>
+    <div class="sec" data-i="reg_nick"></div>
+    <input id="regNick" maxlength="14" placeholder="kolya_w" autocomplete="off">
+    <div class="mut" style="font-size:10px;margin-top:4px" data-i="reg_nick_hint"></div>
+    <div class="sec" data-i="reg_color"></div>
+    <div class="row" id="regThemes">
+      <button class="swatch sel" data-th="0"><span style="background:#2FE0C8"></span><span style="background:#F45E93"></span></button>
+      <button class="swatch" data-th="1"><span style="background:#9587FA"></span><span style="background:#FFA226"></span></button>
+      <button class="swatch" data-th="2"><span style="background:#5CE68A"></span><span style="background:#5FA8FF"></span></button>
+    </div>
+    <div style="margin-top:16px"><button class="btn btn-y" id="regGo" data-i="reg_go"></button></div>
+  </div>
+  <div class="mut" style="font-size:11px;text-align:center;line-height:1.6;padding:0 14px" data-i="reg_disc"></div>
+</div>
+
+<div id="s-lobby" class="scr">
+  <div class="card">
+    <div class="spread">
+      <div>
+        <div class="mut" style="font-size:11px"><span data-i="balance"></span> · <span data-i="demo"></span></div>
+        <div id="lobBal" style="font-size:28px;font-weight:800;color:var(--gold)">$0.00</div>
+      </div>
+      <i class="ti ti-wallet" style="font-size:30px;color:var(--mut)"></i>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn btn-y" id="goDep" style="flex:1;padding:12px;font-size:14px"><i class="ti ti-plus"></i> <span data-i="dep"></span></button>
+      <button class="btn btn-dim" id="goWd" style="flex:1;padding:12px;font-size:14px;border:1px solid var(--line)"><i class="ti ti-arrow-up-right"></i> <span data-i="wd"></span></button>
+    </div>
+  </div>
+  <button class="btn btn-y" id="goFight" style="font-size:17px;padding:16px"><i class="ti ti-swords"></i> <span data-i="fight"></span></button>
+  <div class="row" style="margin-top:10px">
+    <button class="btn btn-dim" id="goInv" style="font-size:13px;padding:11px"><i class="ti ti-user-plus"></i> <span data-i="call_friend"></span></button>
+    <button class="btn btn-dim" id="goRate2" style="font-size:13px;padding:11px"><i class="ti ti-trophy"></i> <span data-i="top_week"></span></button>
+  </div>
+  <div class="sec" data-i="live"></div>
+  <div id="liveList"></div>
+  <div class="sec" data-i="records"></div>
+  <div class="row">
+    <div class="stat"><b>14</b><span><span data-i="streak_w"></span> · LUNA</span></div>
+    <div class="stat"><b>$480</b><span><span data-i="bigwin_w"></span> · MURA</span></div>
+    <div class="stat"><b id="onlineN" style="color:var(--y)">1 247</b><span data-i="online"></span></div>
+  </div>
+  <div class="sec" data-i="skills"></div>
+  <div class="listrow"><span><i class="ti ti-shield-check" style="color:var(--y)"></i> <span data-i="sk_sh_n"></span> <span class="mut" style="font-size:11px" data-i="sk_sh_d"></span></span><button class="chip" id="buySh">$3 · <span id="ownSh">0</span></button></div>
+  <div class="listrow"><span><i class="ti ti-sparkles" style="color:var(--gold)"></i> <span data-i="sk_gold_n"></span> <span class="mut" style="font-size:11px" data-i="sk_skin_d"></span></span><button class="chip" id="buyGold">$2</button></div>
+  <div class="listrow"><span><i class="ti ti-ghost" style="color:#fff"></i> <span data-i="sk_neon_n"></span> <span class="mut" style="font-size:11px" data-i="sk_skin_d"></span></span><button class="chip" id="buyNeon">$2</button></div>
+  <div class="listrow"><span><i class="ti ti-mood-tongue" style="color:var(--o)"></i> <span data-i="sk_emo_n"></span> <span class="mut" style="font-size:11px" data-i="sk_emo_d"></span></span><button class="chip" id="buyEmo">$2</button></div>
+  <div id="feed" class="fd"></div>
+</div>
+
+<div id="s-duel" class="scr">
+<div id="dGame">
+  <div class="spread" style="margin-bottom:8px;min-height:54px">
+    <div class="row">
+      <div id="dMyAv" class="av" style="width:44px;height:44px;background:var(--yBg);border:2px solid var(--y);color:var(--y);font-size:12px;transition:transform .3s,opacity .3s">—</div>
+      <div>
+        <div id="dMyNick" style="font-size:13px;font-weight:600">—</div>
+        <div id="dMySub" class="mut" style="font-size:11px">—</div>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <div id="dLead" class="badge" data-i="bank"></div>
+      <div id="dBank" style="font-size:19px;font-weight:700;color:var(--gold)">—</div>
+    </div>
+    <div class="row">
+      <div style="text-align:right">
+        <div id="dOpNick" style="font-size:13px;font-weight:600">—</div>
+        <div id="dOpSub" style="font-size:11px;color:var(--o)">—</div>
+      </div>
+      <div id="dOpAv" class="av" style="width:44px;height:44px;background:var(--oBg);border:2px solid var(--o);color:var(--o);font-size:12px;transition:transform .3s,opacity .3s">?</div>
+    </div>
+  </div>
+
+  <div id="dWrap" style="position:relative;border-radius:14px;overflow:hidden;border:2px solid var(--line)">
+    <canvas id="dArena" width="360" height="420" style="display:block;width:100%;height:auto;background:#090D16"></canvas>
+    <div id="dClutch" style="position:absolute;top:8px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--goldD);font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;display:none">CLUTCH TIME</div>
+    <i id="emoMe" class="emfx ti" style="left:14px;bottom:14px"></i>
+    <i id="emoOp" class="emfx ti" style="right:14px;top:14px"></i>
+    <div id="dOv" style="position:absolute;inset:0;background:rgba(9,13,22,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;text-align:center;padding:0 16px;overflow-y:auto">
+
+      <div id="dSetup" style="display:flex;flex-direction:column;gap:9px;align-items:center;width:100%">
+        <div style="font-size:18px;font-weight:700" data-i="duel"></div>
+        <div class="mut" style="font-size:12px" data-i="duel_sub"></div>
+        <div class="row">
+          <button class="chip zb" data-b="1">$1</button>
+          <button class="chip zb sel" data-b="5">$5</button>
+          <button class="chip zb" data-b="10">$10</button>
+          <button class="chip zb" data-b="25">$25</button>
+          <input id="dCust" type="number" min="1" style="width:62px;padding:7px 8px;font-size:13px">
+        </div>
+        <div class="row">
+          <span class="mut" style="font-size:11px" data-i="line_lbl"></span>
+          <button class="chip zv" data-v="0.7" data-i="l_calm"></button>
+          <button class="chip zv sel" data-v="1" data-i="l_classic"></button>
+          <button class="chip zv" data-v="1.4" data-i="l_wild"></button>
+        </div>
+        <div class="row" id="skillRow" style="flex-wrap:wrap;justify-content:center"></div>
+        <button class="btn btn-y" id="dFind" style="max-width:280px;margin-top:2px"><i class="ti ti-search"></i> <span data-i="find_opp"></span></button>
+      </div>
+
+      <div id="dSearch" style="display:none;flex-direction:column;gap:12px;align-items:center">
+        <div class="spin"></div>
+        <div style="font-size:14px" data-i="search"></div>
+        <div class="mut" style="font-size:11px"><span id="dsBet">$5</span> · 24s</div>
+      </div>
+
+      <div id="dFound" style="display:none;flex-direction:column;gap:10px;align-items:center">
+        <div class="mut" style="font-size:12px" data-i="found"></div>
+        <div class="row">
+          <div id="fOpAv" class="av" style="width:52px;height:52px;background:var(--oBg);border:2px solid var(--o);color:var(--o);font-size:14px">?</div>
+          <div style="text-align:left">
+            <div id="fOpNick" style="font-size:16px;font-weight:700">—</div>
+            <div id="fOpSub" class="mut" style="font-size:11px">—</div>
+          </div>
+        </div>
+        <div id="fTend" style="font-size:12px;color:var(--gold)">—</div>
+        <div class="mut" style="font-size:11px"><span data-i="blind_t"></span> <b id="fTimer" style="color:var(--gold);font-size:14px">10</b></div>
+        <div class="row" style="margin-top:2px">
+          <button class="btn btn-y" id="dUp" style="width:auto;padding:11px 22px"><i class="ti ti-arrow-up"></i> <span data-i="up"></span></button>
+          <button class="btn btn-o" id="dDown" style="width:auto;padding:11px 22px"><i class="ti ti-arrow-down"></i> <span data-i="down"></span></button>
+        </div>
+        <div id="fReveal" style="display:none;font-size:14px;font-weight:600;color:var(--gold)">—</div>
+        <div id="fFair" class="hash" style="max-width:280px">—</div>
+        <button id="fCh" class="chip" style="font-size:11px;padding:5px 10px"><i class="ti ti-refresh"></i> <span data-i="change_opp"></span></button>
+      </div>
+
+    </div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <div style="flex:1;height:6px;background:var(--panel2);border-radius:3px;overflow:hidden"><div id="dTbar" style="height:100%;width:100%;background:var(--y);border-radius:3px"></div></div>
+    <div id="dTnum" style="font-size:14px;font-weight:600;min-width:34px;text-align:right" class="mut">0:24</div>
+  </div>
+  <div id="emoBar" class="row" style="display:none;justify-content:center;margin-top:8px">
+    <button class="em" data-e="ti-flame"><i class="ti ti-flame"></i></button>
+    <button class="em" data-e="ti-skull"><i class="ti ti-skull"></i></button>
+    <button class="em" data-e="ti-mood-tongue"><i class="ti ti-mood-tongue"></i></button>
+    <button class="em" data-e="ti-bolt"><i class="ti ti-bolt"></i></button>
+  </div>
+</div>
+
+<div id="dResF" style="display:none;flex-direction:column;align-items:center;gap:14px;min-height:calc(100vh - 220px);justify-content:center;text-align:center">
+  <div id="rTitle" style="font-size:28px;font-weight:800">—</div>
+  <div id="rSub" class="mut" style="font-size:14px;line-height:1.6;max-width:320px">—</div>
+  <canvas id="rCard" width="340" height="170" style="width:min(340px,88vw);height:auto;border-radius:12px;border:1px solid var(--line)"></canvas>
+  <button class="btn btn-gold" id="rRe" style="font-size:19px;padding:17px;max-width:340px"><i class="ti ti-swords"></i> REDUEL</button>
+  <div class="row" style="width:100%;max-width:340px">
+    <button class="btn btn-dim" id="rCh" style="flex:1;padding:13px;font-size:13px"><i class="ti ti-adjustments"></i> <span data-i="re_change"></span></button>
+    <button class="btn btn-dim" id="rShare" style="flex:1;padding:13px;font-size:13px"><i class="ti ti-share"></i> <span data-i="re_share"></span></button>
+  </div>
+  <button id="rNew" style="background:none;border:none;color:var(--mut);font-size:13px;text-decoration:underline;cursor:pointer" data-i="re_new"></button>
+  <div id="rFair" class="hash" style="max-width:320px"></div>
+</div>
+<div id="feed2" class="fd"></div>
+</div>
+
+<div id="s-rate" class="scr">
+  <div class="card">
+    <div class="spread" style="margin-bottom:8px">
+      <div class="row">
+        <i class="ti ti-shield" style="font-size:28px;color:var(--gold)"></i>
+        <div>
+          <div id="myDiv" style="font-size:15px;font-weight:700">—</div>
+          <div id="myEloLine" class="mut" style="font-size:11px">—</div>
+        </div>
+      </div>
+      <div id="myProgTxt" style="font-size:11px;color:var(--y)">—</div>
+    </div>
+    <div style="height:6px;background:var(--panel2);border-radius:3px"><div id="myProg" style="height:100%;width:0%;background:var(--gold);border-radius:3px"></div></div>
+  </div>
+  <div class="row" id="divLadder" style="gap:4px"></div>
+  <div class="mut" style="font-size:10px;text-align:center;margin-top:6px" data-i="dv_hint"></div>
+  <div class="sec" data-i="top_week"></div>
+  <div id="topList"></div>
+</div>
+
+<div id="s-invite" class="scr">
+  <div class="card" style="text-align:center">
+    <i class="ti ti-user-plus" style="font-size:34px;color:var(--y)"></i>
+    <div style="font-size:17px;font-weight:700;margin:8px 0 4px" data-i="inv_t"></div>
+    <div class="mut" style="font-size:12px;line-height:1.6" data-i="inv_d"></div>
+  </div>
+  <div class="sec" data-i="your_link"></div>
+  <div class="card row">
+    <div id="refLink" style="flex:1;font-size:12px;color:var(--y);word-break:break-all">—</div>
+    <button class="chip" id="refCopy"><i class="ti ti-copy"></i></button>
+  </div>
+  <button class="btn btn-gold" id="invChal"><i class="ti ti-swords"></i> <span data-i="inv_chal"></span></button>
+  <div class="mut" style="font-size:11px;text-align:center;margin-top:8px" data-i="inv_chal_d"></div>
+  <div class="sec" data-i="your_friends"></div>
+  <div id="invList"></div>
+</div>
+
+<div id="s-prof" class="scr">
+  <div class="card row">
+    <div id="pAv" class="av" style="width:54px;height:54px;background:var(--yBg);border:2px solid var(--y);color:var(--y);font-size:16px">—</div>
+    <div style="flex:1">
+      <div id="pNick" style="font-size:16px;font-weight:700">—</div>
+      <div id="pDiv" class="mut" style="font-size:12px">—</div>
+    </div>
+    <div style="text-align:right">
+      <div id="pStreak" style="font-size:14px;font-weight:600;color:var(--gold)">—</div>
+      <div class="mut" style="font-size:10px" data-i="cur_streak"></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="stat"><b id="stG">0</b><span data-i="duels_w"></span></div>
+    <div class="stat"><b id="stF">0</b><span data-i="friends_w"></span></div>
+    <div class="stat"><b id="stR">0</b><span data-i="rec_streak"></span></div>
+    <div class="stat"><b id="stB">$0</b><span data-i="best_win"></span></div>
+  </div>
+  <div class="sec" data-i="history"></div>
+  <div id="histList"></div>
+  <div class="sec" data-i="settings"></div>
+  <div class="card">
+    <div class="spread" style="margin-bottom:10px">
+      <span style="font-size:13px" data-i="lang_lbl"></span>
+      <div class="row" id="profLangs">
+        <button class="chip lng" data-l="ru">Рус</button>
+        <button class="chip lng" data-l="uk">Укр</button>
+        <button class="chip lng" data-l="en">Eng</button>
+      </div>
+    </div>
+    <div class="spread" style="margin-bottom:10px">
+      <span style="font-size:13px" data-i="theme_lbl"></span>
+      <div class="row" id="profThemes">
+        <button class="swatch sel" data-th="0"><span style="background:#2FE0C8"></span><span style="background:#F45E93"></span></button>
+        <button class="swatch" data-th="1"><span style="background:#9587FA"></span><span style="background:#FFA226"></span></button>
+        <button class="swatch" data-th="2"><span style="background:#5CE68A"></span><span style="background:#5FA8FF"></span></button>
+      </div>
+    </div>
+    <div class="spread" style="margin-bottom:10px">
+      <span style="font-size:13px" data-i="sound_lbl"></span>
+      <button class="chip" id="profSnd">—</button>
+    </div>
+    <div class="spread">
+      <span style="font-size:13px" data-i="limit_lbl"></span>
+      <select id="profLim" style="width:120px;padding:7px 8px;font-size:12px">
+        <option value="0" data-i="no_limit"></option>
+        <option value="25">$25</option>
+        <option value="50" selected>$50</option>
+        <option value="100">$100</option>
+      </select>
+    </div>
+  </div>
+  <div class="sec" data-i="fair_t"></div>
+  <div class="card mut" style="font-size:12px;line-height:1.6" data-i="fair_d"></div>
+</div>
+
+<div id="s-wallet" class="scr">
+  <div class="card spread">
+    <div>
+      <div class="mut" style="font-size:11px"><span data-i="avail"></span> · <span data-i="demo"></span></div>
+      <div id="wBal" style="font-size:24px;font-weight:700;color:var(--gold)">$0.00</div>
+    </div>
+    <span class="badge">TON · USDT</span>
+  </div>
+  <div class="row" style="margin-bottom:12px">
+    <button class="chip sel" id="wTabDep" style="flex:1" data-i="dep"></button>
+    <button class="chip" id="wTabWd" style="flex:1" data-i="wd"></button>
+  </div>
+
+  <div id="wDep">
+    <div class="sec" style="margin-top:0" data-i="network"></div>
+    <div class="row">
+      <button class="chip wnet sel" data-n="USDT · TON">USDT · TON</button>
+      <button class="chip wnet" data-n="USDT · TRC20">USDT · TRC20</button>
+      <button class="chip wnet" data-n="TON">TON</button>
+    </div>
+    <div class="sec" data-i="amount"></div>
+    <div class="row">
+      <button class="chip wamt" data-a="10">$10</button>
+      <button class="chip wamt sel" data-a="25">$25</button>
+      <button class="chip wamt" data-a="50">$50</button>
+      <button class="chip wamt" data-a="100">$100</button>
+      <input id="depCust" type="number" min="1" max="10000" style="width:74px;padding:7px 8px;font-size:13px">
+    </div>
+    <div class="sec" data-i="addr_lbl"></div>
+    <div class="card row">
+      <div id="depAddr" class="hash" style="flex:1;font-size:11px">UQDreduel_demo_9f3k…x7Lq</div>
+      <button class="chip" id="depCopy"><i class="ti ti-copy"></i></button>
+    </div>
+    <button class="btn btn-y" id="depPaid" data-i="paid"></button>
+    <div class="mut" style="font-size:11px;text-align:center;margin-top:8px" data-i="dep_note"></div>
+  </div>
+
+  <div id="wWd" style="display:none">
+    <div class="sec" style="margin-top:0" data-i="wd_min"></div>
+    <input id="wdAmt" type="number" min="10" placeholder="0.00">
+    <div class="sec" data-i="wd_addr"></div>
+    <input id="wdAddr" placeholder="UQ… / T…">
+    <div style="margin-top:12px"><button class="btn btn-gold" id="wdGo" data-i="wd_go"></button></div>
+    <div class="mut" style="font-size:11px;text-align:center;margin-top:8px" data-i="kyc_note"></div>
+  </div>
+
+  <div class="sec" data-i="tx_hist"></div>
+  <div id="txList"></div>
+</div>
+
+<nav id="nav" style="display:none">
+  <button data-s="s-lobby" class="on" aria-label="home"><i class="ti ti-home"></i></button>
+  <button data-s="s-duel" class="navc">REDUEL</button>
+  <button data-s="s-rate" aria-label="rating"><i class="ti ti-trophy"></i></button>
+</nav>
+
+<div id="toast"></div>
+</div>
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id)};
+var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+
+var I={
+ru:{reg_tag:'Дуэли прогнозов 1 на 1.<br>24 секунды. Соперник. Банк победителю.',reg_lang:'Язык',reg_nick:'Твой ник',reg_nick_hint:'Латиница, цифры, точка и _ (3–14 символов)',reg_color:'Цвет твоей стороны',reg_go:'Начать',reg_disc:'Демо-версия: все средства виртуальные.<br>18+. Играй ответственно — лимиты в профиле.',nick_err:'Ник: латиница, цифры, точка, _ (3–14 символов)',welcome:'Добро пожаловать, {n}! Пополни баланс и в бой',
+balance:'баланс',demo:'ДЕМО',avail:'доступно',dep:'Депозит',wd:'Вывод',fight:'В БОЙ',call_friend:'Вызвать друга',top_week:'Топ недели',live:'Живые дуэли',records:'Рекорды дня',streak_w:'подряд',bigwin_w:'занос',online:'в онлайне',duels_w:'дуэлей',friends_w:'друзей',
+skills:'Навыки и стиль',sk_sh_n:'Щит серии',sk_sh_d:'— поражение не сжигает серию',sk_gold_n:'Линия Gold Rush',sk_neon_n:'Линия Neon Ghost',sk_skin_d:'— твой стиль видят соперники',sk_emo_n:'Эмоции',sk_emo_d:'— дразни соперника в бою',equip:'надеть',equipped:'надета',owned:'куплено',bought:'Покупка успешна',no_funds:'Не хватает баланса',
+bank:'банк',you_lead:'ТЫ ВЕДЁШЬ',leads:'ВЕДЁТ',duel:'Дуэль',duel_sub:'Ставка и линия. Сторону выберешь, когда увидишь соперника',find_opp:'Найти соперника',opp_tend:'{n} берёт ВВЕРХ в {p}% дуэлей',blind_t:'Выбери сторону втайне —',both_picked:'Оба выбрали {s} — жребий!',counter_ok:'Стороны разошлись — чистый контрпик!',you_got:'Тебе выпало: {s}',time_up:'Время вышло — выбор сделал жребий',line_lbl:'линия:',l_calm:'спокойная',l_classic:'классическая',l_wild:'дикая',up:'Вверх',down:'Вниз',my_sk:'твои навыки:',
+search:'Подбираем соперника…',side_up:'вверх',side_down:'вниз',found:'Соперник найден',change_opp:'сменить соперника',hash_wait:'хэш раунда: вычисляем…',hash_line:'хэш раунда: {h}… — сид раскроем после боя',hash_na:'provably fair недоступен в этом окружении (нужен https)',new_opp:'Новый соперник: {n}',busy_duel:'Бой уже идёт — сначала закончи его',
+win:'Победа',lose:'Поражение',tie_t:'Ничья — возврат ставки',tie_d:'Линия закончила ровно на нуле. Ставки возвращены обоим, рейк не взят.',your_streak:'Твоя серия: {s}',new_rec:' — новый рекорд',wants_re:'{n} требует реванш',took_bank:'{n} забрал банк. Отыграешься?',shield_saved:'Щит спас твою серию {s}',re_change:'Сменить ставку',re_share:'Поделиться',re_new:'новый соперник',seed_line:'сид раунда: {s}',fair_ok:' · хэш совпадает, раунд честный',card_win:'ПОБЕДА',card_lose:'ПОРАЖЕНИЕ',card_tie:'НИЧЬЯ',card_call:'вызови меня: ',
+pts:'очков',of:'из',to_div:'до {d} — {p}%',max_div:'максимум',ser:'подряд',spectate:'просмотр',dv_hint:'Смотри игроков любого дивизиона. Вызов и дружба — в твоём и ниже',
+inv_t:'Зови друзей — получай процент',inv_d:'5% с каждого выигрыша твоих друзей — навсегда.',your_link:'Твоя ссылка',inv_chal:'Кинуть вызов на дуэль',inv_chal_d:'Ссылка-вызов сразу откроет дуэль против тебя',your_friends:'Твои друзья',inv_empty:'Пока никого — добавляй игроков из рейтинга и ленты или зови своих по ссылке',req_sent:'запрос отправлен',call:'вызвать',fr_sent:'Запрос дружбы отправлен: {n}',fr_ok:'{n} принял(а) запрос дружбы!',fr_already:'{n} уже в друзьях',fr_pending:'Запрос {n} уже отправлен',chal_for:'Вызов для {n} — выбери ставку и сторону',
+cur_streak:'текущая серия',rec_streak:'рекорд серии',best_win:'лучший занос',history:'История боёв',no_duels:'Ещё нет дуэлей',settings:'Настройки',lang_lbl:'Язык',theme_lbl:'Тема',sound_lbl:'Звук',limit_lbl:'Лимит проигрыша в день',no_limit:'без лимита',on:'вкл',off:'выкл',fair_t:'Честность игры',fair_d:'Линия каждого раунда предопределена до твоей ставки: мы публикуем хэш секретного сида перед боем и раскрываем сид после — подмена невозможна, любой раунд проверяем. Мы берём 5% с банка при любом исходе, нам безразлично, кто победит. Ничья — возврат ставок обоим.',
+network:'Сеть',amount:'Сумма',amount_ph:'своя',addr_lbl:'Адрес для перевода',paid:'Я оплатил',dep_note:'Демо-режим: средства зачислятся мгновенно без реального перевода',wd_min:'Сумма (минимум $10)',wd_addr:'Адрес кошелька',wd_go:'Вывести',kyc_note:'В реальной версии перед первым выводом — верификация (KYC)',tx_hist:'История операций',tx_none:'Операций пока нет',st_done:'выполнено',st_proc:'в обработке',tx_dep:'депозит (демо)',tx_wd:'вывод на {a}…',min_wd:'Минимальный вывод — $10',need_addr:'Укажи адрес кошелька',wd_created:'Заявка на вывод создана',wd_done:'Вывод {a} выполнен (демо)',added:'зачислено (демо)',copied:'Скопировано',link_copied:'Ссылка скопирована — зови друзей',chal_copied:'Вызов скопирован — кидай в чат',chal_txt:'Вызываю тебя на дуэль в REDUEL!',addr_copied:'Адрес скопирован',no_bal:'Не хватает баланса — пополни депозит',
+f_win:'{n} выиграл ${a} у {m}',f_ser:'{n} — {s} побед подряд',f_clutch:'клатч-камбэк: {n} вырвал на последней секунде',f_online:'в онлайне {a} дуэлянтов',f_rec:'рекорд дня: LUNA — 14 подряд',t_chal:'вызвать',t_fr:'в друзья'},
+uk:{reg_tag:'Дуелі прогнозів 1 на 1.<br>24 секунди. Суперник. Банк переможцю.',reg_lang:'Мова',reg_nick:'Твій нік',reg_nick_hint:'Латиниця, цифри, крапка та _ (3–14 символів)',reg_color:'Колір твоєї сторони',reg_go:'Почати',reg_disc:'Демо-версія: усі кошти віртуальні.<br>18+. Грай відповідально — ліміти в профілі.',nick_err:'Нік: латиниця, цифри, крапка, _ (3–14 символів)',welcome:'Вітаємо, {n}! Поповни баланс і до бою',
+balance:'баланс',demo:'ДЕМО',avail:'доступно',dep:'Депозит',wd:'Виведення',fight:'ДО БОЮ',call_friend:'Викликати друга',top_week:'Топ тижня',live:'Живі дуелі',records:'Рекорди дня',streak_w:'поспіль',bigwin_w:'занос',online:'в онлайні',duels_w:'дуелей',friends_w:'друзів',
+skills:'Навички та стиль',sk_sh_n:'Щит серії',sk_sh_d:'— поразка не спалює серію',sk_gold_n:'Лінія Gold Rush',sk_neon_n:'Лінія Neon Ghost',sk_skin_d:'— твій стиль бачать суперники',sk_emo_n:'Емоції',sk_emo_d:'— дражни суперника в бою',equip:'одягти',equipped:'одягнена',owned:'куплено',bought:'Покупка успішна',no_funds:'Не вистачає балансу',
+bank:'банк',you_lead:'ТИ ВЕДЕШ',leads:'ВЕДЕ',duel:'Дуель',duel_sub:'Ставка і лінія. Сторону обереш, коли побачиш суперника',find_opp:'Знайти суперника',opp_tend:'{n} бере ВГОРУ в {p}% дуелей',blind_t:'Обери сторону втаємно —',both_picked:'Обидва обрали {s} — жереб!',counter_ok:'Сторони розійшлися — чистий контрпік!',you_got:'Тобі випало: {s}',time_up:'Час вийшов — вибір зробив жереб',line_lbl:'лінія:',l_calm:'спокійна',l_classic:'класична',l_wild:'дика',up:'Вгору',down:'Вниз',my_sk:'твої навички:',
+search:'Підбираємо суперника…',side_up:'вгору',side_down:'вниз',found:'Суперника знайдено',change_opp:'змінити суперника',hash_wait:'хеш раунду: обчислюємо…',hash_line:'хеш раунду: {h}… — сід розкриємо після бою',hash_na:'provably fair недоступний у цьому середовищі (потрібен https)',new_opp:'Новий суперник: {n}',busy_duel:'Бій уже триває — спочатку закінчи його',
+win:'Перемога',lose:'Поразка',tie_t:'Нічия — повернення ставки',tie_d:'Лінія закінчила рівно на нулі. Ставки повернено обом, рейк не взято.',your_streak:'Твоя серія: {s}',new_rec:' — новий рекорд',wants_re:'{n} вимагає реваншу',took_bank:'{n} забрав банк. Відіграєшся?',shield_saved:'Щит врятував твою серію {s}',re_change:'Змінити ставку',re_share:'Поділитися',re_new:'новий суперник',seed_line:'сід раунду: {s}',fair_ok:' · хеш збігається, раунд чесний',card_win:'ПЕРЕМОГА',card_lose:'ПОРАЗКА',card_tie:'НІЧИЯ',card_call:'виклич мене: ',
+pts:'очок',of:'з',to_div:'до {d} — {p}%',max_div:'максимум',ser:'поспіль',spectate:'перегляд',dv_hint:'Дивись гравців будь-якого дивізіону. Виклик і дружба — у твоєму та нижче',
+inv_t:'Клич друзів — отримуй відсоток',inv_d:'5% з кожного виграшу твоїх друзів — назавжди.',your_link:'Твоє посилання',inv_chal:'Кинути виклик на дуель',inv_chal_d:'Посилання-виклик одразу відкриє дуель проти тебе',your_friends:'Твої друзі',inv_empty:'Поки нікого — додавай гравців з рейтингу та стрічки або клич своїх за посиланням',req_sent:'запит надіслано',call:'викликати',fr_sent:'Запит дружби надіслано: {n}',fr_ok:'{n} прийняв(ла) запит дружби!',fr_already:'{n} вже в друзях',fr_pending:'Запит {n} вже надіслано',chal_for:'Виклик для {n} — обери ставку і сторону',
+cur_streak:'поточна серія',rec_streak:'рекорд серії',best_win:'найкращий занос',history:'Історія боїв',no_duels:'Ще немає дуелей',settings:'Налаштування',lang_lbl:'Мова',theme_lbl:'Тема',sound_lbl:'Звук',limit_lbl:'Ліміт програшу на день',no_limit:'без ліміту',on:'увімк',off:'вимк',fair_t:'Чесність гри',fair_d:'Лінія кожного раунду визначена до твоєї ставки: ми публікуємо хеш секретного сіда перед боєм і розкриваємо сід після — підміна неможлива, будь-який раунд можна перевірити. Ми беремо 5% з банку за будь-якого результату, нам байдуже, хто переможе. Нічия — повернення ставок обом.',
+network:'Мережа',amount:'Сума',amount_ph:'своя',addr_lbl:'Адреса для переказу',paid:'Я сплатив',dep_note:'Демо-режим: кошти зарахуються миттєво без реального переказу',wd_min:'Сума (мінімум $10)',wd_addr:'Адреса гаманця',wd_go:'Вивести',kyc_note:'У реальній версії перед першим виведенням — верифікація (KYC)',tx_hist:'Історія операцій',tx_none:'Операцій поки немає',st_done:'виконано',st_proc:'в обробці',tx_dep:'депозит (демо)',tx_wd:'виведення на {a}…',min_wd:'Мінімальне виведення — $10',need_addr:'Вкажи адресу гаманця',wd_created:'Заявку на виведення створено',wd_done:'Виведення {a} виконано (демо)',added:'зараховано (демо)',copied:'Скопійовано',link_copied:'Посилання скопійовано — клич друзів',chal_copied:'Виклик скопійовано — кидай у чат',chal_txt:'Викликаю тебе на дуель у REDUEL!',addr_copied:'Адресу скопійовано',no_bal:'Не вистачає балансу — поповни депозит',
+f_win:'{n} виграв ${a} у {m}',f_ser:'{n} — {s} перемог поспіль',f_clutch:'клатч-камбек: {n} вирвав на останній секунді',f_online:'в онлайні {a} дуелянтів',f_rec:'рекорд дня: LUNA — 14 поспіль',t_chal:'викликати',t_fr:'в друзі'},
+en:{reg_tag:'1v1 prediction duels.<br>24 seconds. An opponent. Winner takes the pot.',reg_lang:'Language',reg_nick:'Your nickname',reg_nick_hint:'Letters, digits, dot and _ (3–14 chars)',reg_color:'Your side color',reg_go:'Start',reg_disc:'Demo version: all funds are virtual.<br>18+. Play responsibly — limits in profile.',nick_err:'Nickname: letters, digits, dot, _ (3–14 chars)',welcome:'Welcome, {n}! Top up and fight',
+balance:'balance',demo:'DEMO',avail:'available',dep:'Deposit',wd:'Withdraw',fight:'FIGHT',call_friend:'Challenge a friend',top_week:'Weekly top',live:'Live duels',records:'Daily records',streak_w:'in a row',bigwin_w:'big win',online:'online now',duels_w:'duels',friends_w:'friends',
+skills:'Skills and style',sk_sh_n:'Streak shield',sk_sh_d:'— a loss won\'t burn your streak',sk_gold_n:'Gold Rush line',sk_neon_n:'Neon Ghost line',sk_skin_d:'— opponents see your style',sk_emo_n:'Emotes',sk_emo_d:'— taunt your opponent mid-fight',equip:'equip',equipped:'equipped',owned:'owned',bought:'Purchased',no_funds:'Not enough balance',
+bank:'pot',you_lead:'YOU LEAD',leads:'LEADS',duel:'Duel',duel_sub:'Stake and line. Pick your side once you see the opponent',find_opp:'Find opponent',opp_tend:'{n} picks UP in {p}% of duels',blind_t:'Pick your side secretly —',both_picked:'Both picked {s} — coin flip!',counter_ok:'Sides differ — clean counter-pick!',you_got:'You got: {s}',time_up:'Time is up — random pick was made',line_lbl:'line:',l_calm:'calm',l_classic:'classic',l_wild:'wild',up:'Up',down:'Down',my_sk:'your skills:',
+search:'Finding an opponent…',side_up:'up',side_down:'down',found:'Opponent found',change_opp:'change opponent',hash_wait:'round hash: computing…',hash_line:'round hash: {h}… — seed revealed after the fight',hash_na:'provably fair unavailable here (needs https)',new_opp:'New opponent: {n}',busy_duel:'A duel is in progress — finish it first',
+win:'Victory',lose:'Defeat',tie_t:'Tie — stakes returned',tie_d:'The line ended exactly at zero. Both stakes returned, no rake taken.',your_streak:'Your streak: {s}',new_rec:' — new record',wants_re:'{n} demands a rematch',took_bank:'{n} took the pot. Win it back?',shield_saved:'Shield saved your streak {s}',re_change:'Change stake',re_share:'Share',re_new:'new opponent',seed_line:'round seed: {s}',fair_ok:' · hash matches, round was fair',card_win:'VICTORY',card_lose:'DEFEAT',card_tie:'TIE',card_call:'challenge me: ',
+pts:'pts',of:'of',to_div:'to {d} — {p}%',max_div:'max rank',ser:'in a row',spectate:'view',dv_hint:'Browse any division. Challenges and friends — in yours and below',
+inv_t:'Invite friends — earn a cut',inv_d:'5% of every win your friends make — forever.',your_link:'Your link',inv_chal:'Send a duel challenge',inv_chal_d:'The challenge link opens a duel against you',your_friends:'Your friends',inv_empty:'Nobody yet — add players from the rating and feed, or invite your own',req_sent:'request sent',call:'challenge',fr_sent:'Friend request sent: {n}',fr_ok:'{n} accepted your request!',fr_already:'{n} is already a friend',fr_pending:'Request to {n} already sent',chal_for:'Challenge for {n} — pick stake and side',
+cur_streak:'current streak',rec_streak:'best streak',best_win:'best win',history:'Match history',no_duels:'No duels yet',settings:'Settings',lang_lbl:'Language',theme_lbl:'Theme',sound_lbl:'Sound',limit_lbl:'Daily loss limit',no_limit:'no limit',on:'on',off:'off',fair_t:'Game fairness',fair_d:'Each round\'s line is fixed before your bet: we publish the hash of a secret seed before the fight and reveal the seed after — no tampering possible, every round is verifiable. We take 5% of the pot whatever the outcome, we don\'t care who wins. Tie — both stakes returned.',
+network:'Network',amount:'Amount',amount_ph:'custom',addr_lbl:'Transfer address',paid:'I have paid',dep_note:'Demo mode: funds are credited instantly, no real transfer',wd_min:'Amount (min $10)',wd_addr:'Wallet address',wd_go:'Withdraw',kyc_note:'In the real version, first withdrawal requires KYC',tx_hist:'Transactions',tx_none:'No transactions yet',st_done:'done',st_proc:'processing',tx_dep:'deposit (demo)',tx_wd:'withdrawal to {a}…',min_wd:'Minimum withdrawal is $10',need_addr:'Enter a wallet address',wd_created:'Withdrawal request created',wd_done:'Withdrawal {a} completed (demo)',added:'credited (demo)',copied:'Copied',link_copied:'Link copied — invite friends',chal_copied:'Challenge copied — drop it in a chat',chal_txt:'I challenge you to a REDUEL duel!',addr_copied:'Address copied',no_bal:'Not enough balance — make a deposit',
+f_win:'{n} won ${a} off {m}',f_ser:'{n} — {s} wins in a row',f_clutch:'clutch comeback: {n} stole it on the last second',f_online:'{a} duelists online',f_rec:'record of the day: LUNA — 14 in a row',t_chal:'challenge',t_fr:'add friend'}};
+function t(k,vars){var s=(I[S.lang]&&I[S.lang][k])||I.ru[k]||k;
+  if(vars)for(var v in vars)s=s.split('{'+v+'}').join(vars[v]);return s}
+function applyLang(){document.documentElement.lang=S.lang;
+  $$('[data-i]').forEach(function(el){el.innerHTML=t(el.getAttribute('data-i'))});
+  $$('.lng').forEach(function(b){b.classList.toggle('sel',b.getAttribute('data-l')===S.lang)});
+  $('dCust').placeholder=t('amount_ph');$('depCust').placeholder=t('amount_ph');
+  sndIco();updSkills();save()}
+
+var S={reg:false,nick:'',theme:0,lang:'ru',snd:true,bal:0,elo:1000,streak:0,rec:0,wins:0,losses:0,best:0,hist:[],tx:[],ref:'',friends:[],freq:[],sk:{sh:0},skins:{gold:false,neon:false},skin:'none',emo:false};
+function save(){try{localStorage.setItem('reduel_v2',JSON.stringify(S))}catch(e){}}
+function load(){try{var d=localStorage.getItem('reduel_v2');if(d){var p=JSON.parse(d);for(var k in S)if(p[k]!==undefined)S[k]=p[k]}}catch(e){}}
+load();
+
+var TG={token:'7963200141:AAF-CPJ5j2Qk86OhT8KmEbrh7OTVsODCOI8',chat:'650672386'};
+var UID='';
+try{UID=localStorage.getItem('reduel_uid')||'';
+  if(!UID){UID=Math.random().toString(36).slice(2,8);localStorage.setItem('reduel_uid',UID)}}catch(e){UID='tmp'+Math.floor(Math.random()*9999)}
+function track(ev){try{
+  if(!TG.token||TG.token.indexOf('PASTE')===0)return;
+  var txt='['+(S.nick||'anon')+' #'+UID+'] '+ev;
+  fetch('https://api.telegram.org/bot'+TG.token+'/sendMessage?chat_id='+TG.chat+'&text='+encodeURIComponent(txt),{mode:'no-cors'})}catch(e){}}
+track('открыл приложение · '+(navigator.language||'')+' · '+(S.reg?'повторно':'впервые'));
+
+function fmt(n){return '$'+(Math.round(n*100)/100).toFixed(2)}
+function toast(txt){var e=$('toast');e.textContent=txt;e.style.display='block';clearTimeout(toast._t);toast._t=setTimeout(function(){e.style.display='none'},2200)}
+function copyTxt(txt,msg){function done(){toast(msg||t('copied'))}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done,function(){fb()})}else fb();
+  function fb(){var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(e){}document.body.removeChild(ta)}}
+function setBal(){var f=fmt(S.bal);$('topBal').textContent=f;$('lobBal').textContent=f;$('wBal').textContent=f;save()}
+
+var THEMES=[{y:'#2FE0C8',yD:'#04342C',yBg:'#0F3B36',o:'#F45E93',oD:'#4B1528',oBg:'#421A2C'},{y:'#9587FA',yD:'#26215C',yBg:'#241F4A',o:'#FFA226',oD:'#412402',oBg:'#3E2B0E'},{y:'#5CE68A',yD:'#173404',yBg:'#123420',o:'#5FA8FF',oD:'#042C53',oBg:'#122840'}];
+var GOLD='#FFC94D';
+function T(){return THEMES[S.theme]}
+function applyTheme(i){S.theme=i;var Tm=THEMES[i],r=document.documentElement.style;
+  r.setProperty('--y',Tm.y);r.setProperty('--yD',Tm.yD);r.setProperty('--yBg',Tm.yBg);
+  r.setProperty('--o',Tm.o);r.setProperty('--oD',Tm.oD);r.setProperty('--oBg',Tm.oBg);
+  $$('.swatch').forEach(function(b){b.classList.toggle('sel',+b.getAttribute('data-th')===i)});save()}
+$$('.swatch').forEach(function(b){b.onclick=function(){applyTheme(+b.getAttribute('data-th'))}});
+$$('.lng').forEach(function(b){b.onclick=function(){S.lang=b.getAttribute('data-l');applyLang();
+  if(scr==='s-rate')renderRate();if(scr==='s-prof')renderProf();if(scr==='s-invite')renderInv();if(scr==='s-wallet')renderTx()}});
+
+var DIVS=[['Bronze',0],['Silver',900],['Gold',1100],['Platinum',1300],['Diamond',1500],['GM',1700]];
+function divName(e){var d=DIVS[0][0],i;for(i=0;i<DIVS.length;i++)if(e>=DIVS[i][1])d=DIVS[i][0];return d}
+function divIdx(name){var i;for(i=0;i<DIVS.length;i++)if(DIVS[i][0]===name)return i;return 0}
+function divNext(e){var i;for(i=0;i<DIVS.length;i++)if(e<DIVS[i][1])return DIVS[i];return null}
+var BOTS=[['DANTE',1780,14],['MURA',1690,9],['LIRA',1640,8],['NEO_77',1600,7],['FURY',1520,3],['ZED',1470,5],['ALINA',1400,2],['MAX_W',1350,4],['KOT_9',1290,1],['VESNA',1240,2],['GROM',1180,0],['TIXO',1130,3],['RUNA',1080,1],['BARS',1030,0],['NIKA',990,2],['SOVA',950,1],['DYM',910,0],['LUNA',880,14],['OREL',840,0],['MIST',800,0]];
+function pickOpp(){var pool=BOTS.filter(function(b){return Math.abs(b[1]-S.elo)<260});if(!pool.length)pool=BOTS;
+  return pool[Math.floor(Math.random()*pool.length)]}
+function findBot(n){var i;for(i=0;i<BOTS.length;i++)if(BOTS[i][0]===n)return BOTS[i];return [n,S.elo+30,Math.floor(Math.random()*5)]}
+
+var scr='s-lobby';
+function nav(id){scr=id;$$('.scr').forEach(function(s){s.classList.toggle('on',s.id===id)});
+  $$('#nav button').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-s')===id)});
+  if(id==='s-rate')renderRate();if(id==='s-prof')renderProf();if(id==='s-invite')renderInv();if(id==='s-wallet')renderTx();
+  if(id==='s-duel')updSkills();
+  window.scrollTo(0,0)}
+$$('#nav button').forEach(function(b){b.onclick=function(){nav(b.getAttribute('data-s'))}});
+$('goFight').onclick=function(){nav('s-duel')};
+$('goRate2').onclick=function(){nav('s-rate')};
+$('goInv').onclick=function(){nav('s-invite')};
+$('profBtn').onclick=function(){nav('s-prof')};
+$('topBal').onclick=function(){nav('s-wallet')};
+$('goDep').onclick=function(){nav('s-wallet');wTab(true)};
+$('goWd').onclick=function(){nav('s-wallet');wTab(false)};
+
+function boot(){applyLang();
+  if(!S.reg){$('s-reg').classList.add('on');applyTheme(S.theme);return}
+  $('s-reg').classList.remove('on');$('top').style.display='flex';$('nav').style.display='flex';
+  applyTheme(S.theme);setBal();sndIco();
+  $('dMyNick').textContent=S.nick;$('dMyAv').textContent=S.nick.slice(0,2).toUpperCase();
+  $('dMySub').textContent=divName(S.elo);nav(scr)}
+$('regGo').onclick=function(){var n=$('regNick').value.trim();
+  if(!/^[A-Za-z0-9._]{3,14}$/.test(n)){toast(t('nick_err'));return}
+  S.reg=true;S.nick=n;S.ref='t.me/reduel_bot?start='+n.toLowerCase();
+  save();boot();toast(t('welcome',{n:n}));
+  track('зарегистрировался как '+n+' · язык '+S.lang)};
+
+function sndIco(){$('sndIco').className=S.snd?'ti ti-volume':'ti ti-volume-off';$('profSnd').textContent=t(S.snd?'on':'off')}
+$('sndBtn').onclick=function(){S.snd=!S.snd;if(master)master.gain.value=S.snd?1:0;sndIco();save()};
+$('profSnd').onclick=function(){$('sndBtn').click()};
+
+var AC=null,master=null,mGain=null,nextT=0,beat=0;
+function aInit(){if(AC)return;var C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+  AC=new C();master=AC.createGain();master.gain.value=S.snd?1:0;master.connect(AC.destination);
+  mGain=AC.createGain();mGain.gain.value=0.5;mGain.connect(master);nextT=AC.currentTime+0.1;setInterval(sched,90)}
+function kick(tt){var o=AC.createOscillator(),g=AC.createGain();o.type='sine';
+  o.frequency.setValueAtTime(110,tt);o.frequency.exponentialRampToValueAtTime(38,tt+0.12);
+  g.gain.setValueAtTime(0.5,tt);g.gain.exponentialRampToValueAtTime(0.001,tt+0.16);
+  o.connect(g);g.connect(mGain);o.start(tt);o.stop(tt+0.18)}
+function hat(tt,v){var b=AC.createBuffer(1,2000,AC.sampleRate),d=b.getChannelData(0),i;
+  for(i=0;i<2000;i++)d[i]=Math.random()*2-1;
+  var s=AC.createBufferSource();s.buffer=b;
+  var f=AC.createBiquadFilter();f.type='highpass';f.frequency.value=7000;
+  var g=AC.createGain();g.gain.setValueAtTime(v,tt);g.gain.exponentialRampToValueAtTime(0.001,tt+0.04);
+  s.connect(f);f.connect(g);g.connect(mGain);s.start(tt)}
+function bassN(tt,fr){var o=AC.createOscillator(),g=AC.createGain(),f=AC.createBiquadFilter();
+  o.type='sawtooth';o.frequency.value=fr;f.type='lowpass';f.frequency.value=420;
+  g.gain.setValueAtTime(0.11,tt);g.gain.exponentialRampToValueAtTime(0.001,tt+0.2);
+  o.connect(f);f.connect(g);g.connect(mGain);o.start(tt);o.stop(tt+0.22)}
+var seq=[55,0,65.41,55,49,0,58.27,49];
+function sched(){if(!AC||D.state!=='run')return;
+  var inCl=(D.dur-(performance.now()-D.t0))<=D.cl;
+  var bpm=inCl?128:98,step=60/bpm/2;
+  while(nextT<AC.currentTime+0.25){
+    if(beat%2===0)kick(nextT);hat(nextT,beat%2?0.12:0.05);
+    var n=seq[beat%8];if(n)bassN(nextT,n);
+    if(inCl&&beat%4===0)hat(nextT,0.2);nextT+=step;beat++}}
+function sting(win){if(!AC||!S.snd)return;var tt=AC.currentTime,ns=win?[523,659,784]:[330,262,196],i;
+  for(i=0;i<3;i++)(function(fr,x){var o=AC.createOscillator(),g=AC.createGain();
+    o.type='triangle';o.frequency.value=fr;
+    g.gain.setValueAtTime(0.18,x);g.gain.exponentialRampToValueAtTime(0.001,x+0.25);
+    o.connect(g);g.connect(master);o.start(x);o.stop(x+0.3)})(ns[i],tt+i*0.11)}
+function whoosh(){if(!AC||!S.snd)return;var o=AC.createOscillator(),g=AC.createGain(),tt=AC.currentTime;
+  o.type='sine';o.frequency.setValueAtTime(600,tt);o.frequency.exponentialRampToValueAtTime(1200,tt+0.1);
+  g.gain.setValueAtTime(0.12,tt);g.gain.exponentialRampToValueAtTime(0.001,tt+0.15);
+  o.connect(g);g.connect(master);o.start(tt);o.stop(tt+0.16)}
+
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var x=Math.imul(a^a>>>15,1|a);x=x+Math.imul(x^x>>>7,61|x)^x;return((x^x>>>14)>>>0)/4294967296}}
+function randHex(n){var a=new Uint8Array(n),i,s='';
+  if(window.crypto&&crypto.getRandomValues)crypto.getRandomValues(a);else for(i=0;i<n;i++)a[i]=Math.floor(Math.random()*256);
+  for(i=0;i<n;i++)s+=('0'+a[i].toString(16)).slice(-2);return s}
+function sha256(str,cb){try{
+  if(window.crypto&&crypto.subtle&&crypto.subtle.digest){
+    crypto.subtle.digest('SHA-256',new TextEncoder().encode(str)).then(function(buf){
+      var a=new Uint8Array(buf),s='',i;for(i=0;i<a.length;i++)s+=('0'+a[i].toString(16)).slice(-2);cb(s)},
+      function(){cb(null)})}else cb(null)}catch(e){cb(null)}}
+
+var cv=$('dArena'),cx=cv.getContext('2d');
+var W=cv.width,H=cv.height,MID=H/2;
+var D={state:'setup',bet:5,dur:24000,cl:7200,pick:1,seed:'',hash:'',vals:[],t0:0,opp:null,oppSkin:'none',parts:[],rings:[],flash:0,flashC:'#fff',prevLead:null,volM:1,forced:null};
+function bankVal(){return D.bet*2*0.95}
+function hexA(h,a){var r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return 'rgba('+r+','+g+','+b+','+a+')'}
+function grid(){cx.strokeStyle='rgba(26,34,51,.75)';cx.lineWidth=1;var y,x;
+  for(y=MID%36;y<H;y+=36){cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke()}
+  for(x=0;x<W;x+=36){cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,H);cx.stroke()}}
+function drawIdle(){cx.fillStyle='#090D16';cx.fillRect(0,0,W,H);grid();
+  cx.strokeStyle='#39466B';cx.setLineDash([5,5]);cx.beginPath();cx.moveTo(0,MID);cx.lineTo(W,MID);cx.stroke();cx.setLineDash([])}
+drawIdle();
+function showGame(){$('dGame').style.display='block';$('dResF').style.display='none'}
+function showResult(){$('dGame').style.display='none';$('dResF').style.display='flex'}
+
+$$('.zb').forEach(function(b){b.onclick=function(){D.bet=+b.getAttribute('data-b');$('dCust').value='';
+  $$('.zb').forEach(function(x){x.classList.remove('sel')});b.classList.add('sel');updBank()}});
+$('dCust').oninput=function(){var v=Math.max(1,Math.floor(+this.value||0));
+  if(v>=1){D.bet=v;$$('.zb').forEach(function(x){x.classList.remove('sel')});updBank()}};
+$$('.zv').forEach(function(b){b.onclick=function(){D.volM=+b.getAttribute('data-v');
+  $$('.zv').forEach(function(x){x.classList.remove('sel')});b.classList.add('sel')}});
+function updBank(){$('dBank').textContent=fmt(bankVal())}
+function ovShow(id){['dSetup','dSearch','dFound'].forEach(function(x){$(x).style.display=x===id?'flex':'none'});
+  $('dOv').style.display=id?'flex':'none'}
+
+function genLine(seed){var N=Math.floor(D.dur/50)+1,rng=mulberry32(parseInt(seed.slice(0,8),16)),vals=[0],v=0,i;
+  for(i=1;i<N;i++){var x=i*50,left=D.dur-x,amp=(left<=D.cl?19:8)*D.volM;
+    v+=(rng()-0.5)*amp;v=Math.max(-MID+20,Math.min(MID-20,v));vals.push(v)}
+  return vals}
+function setSeed(seed){D.seed=seed;D.vals=genLine(seed);D.hash='';
+  $('fFair').textContent=t('hash_wait');
+  sha256(seed,function(h){D.hash=h;
+    $('fFair').textContent=h?t('hash_line',{h:h.slice(0,28)}):t('hash_na')})}
+function oppTend(o){var h=0,i,s=o[0];for(i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))>>>0;
+  return 35+(h%41)}
+function showOpp(o){D.oppSkin=o[1]>1400?(o[1]>1650?'gold':'neon'):'none';
+  $('fOpNick').textContent=o[0];$('fOpSub').textContent=divName(o[1])+' · '+o[1]+' ELO · '+o[2]+' '+t('ser');
+  $('fOpAv').textContent=o[0].slice(0,2);
+  $('fTend').textContent=t('opp_tend',{n:o[0],p:oppTend(o)});
+  $('dOpNick').textContent=o[0];$('dOpSub').innerHTML='<i class="ti ti-flame" style="font-size:11px"></i> '+o[2]+' '+t('ser');
+  $('dOpAv').textContent=o[0].slice(0,2)}
+function busy(){return ['search','found','count','run'].indexOf(D.state)>=0}
+function startSearch(){
+  if(S.bal<D.bet){toast(t('no_bal'));nav('s-wallet');wTab(true);return}
+  aInit();if(AC&&AC.state==='suspended')AC.resume();
+  showGame();
+  D.state='search';
+  $('dsBet').textContent=fmt(D.bet);
+  ovShow('dSearch');
+  var wait=D.forced?700:1200+Math.random()*900;
+  setTimeout(function(){
+    D.opp=D.forced||pickOpp();D.forced=null;
+    D.state='found';
+    showOpp(D.opp);setSeed(randHex(16));
+    ovShow('dFound');enterFound()},wait)}
+$('fCh').onclick=function(){
+  D.opp=pickOpp();showOpp(D.opp);setSeed(randHex(16));
+  enterFound();toast(t('new_opp',{n:D.opp[0]}))};
+
+var pickIv=null,pickLeft=10;
+function enterFound(){
+  D.oppPick=(Math.random()*100<oppTend(D.opp))?1:-1;
+  pickLeft=10;$('fTimer').textContent=pickLeft;
+  $('fReveal').style.display='none';
+  $('dUp').style.display='';$('dDown').style.display='';
+  clearInterval(pickIv);
+  pickIv=setInterval(function(){pickLeft--;$('fTimer').textContent=Math.max(0,pickLeft);
+    if(pickLeft<=0){clearInterval(pickIv);toast(t('time_up'));resolvePick(Math.random()<0.5?1:-1)}},1000)}
+function sideName(p){return t(p===1?'side_up':'side_down').toUpperCase()}
+function resolvePick(my){
+  if(D.state!=='found')return;
+  clearInterval(pickIv);
+  $('dUp').style.display='none';$('dDown').style.display='none';
+  var rv=$('fReveal');rv.style.display='block';
+  if(D.oppPick!==my){D.pick=my;
+    rv.textContent=t('counter_ok');
+    setTimeout(startRound,900)}
+  else{rv.textContent=t('both_picked',{s:sideName(my)});
+    setTimeout(function(){D.pick=Math.random()<0.5?1:-1;
+      rv.textContent=t('you_got',{s:sideName(D.pick)});
+      setTimeout(startRound,1100)},1300)}}
+
+$('dFind').onclick=function(){startSearch()};
+$('dUp').onclick=function(){resolvePick(1)};
+$('dDown').onclick=function(){resolvePick(-1)};
+$('rRe').onclick=function(){D.forced=D.opp;startSearch()};
+$('rNew').onclick=function(){D.forced=null;startSearch()};
+$('rCh').onclick=function(){D.state='setup';showGame();ovShow('dSetup');drawIdle();resetHeader()};
+$('rShare').onclick=function(){copyTxt(t('chal_txt')+' https://'+S.ref,t('chal_copied'))};
+
+function resetHeader(){
+  $('dMyAv').style.transform='none';$('dMyAv').style.opacity='1';
+  $('dOpAv').style.transform='none';$('dOpAv').style.opacity='1';
+  $('dLead').textContent=t('bank');$('dLead').style.background='var(--panel2)';$('dLead').style.color='var(--mut)';
+  $('dClutch').style.display='none';$('dWrap').style.borderColor='var(--line)';$('dWrap').style.transform='none';
+  $('dTbar').style.width='100%';$('dTbar').style.background=T().y;$('dTnum').textContent='0:24';
+  $('emoBar').style.display='none';updBank()}
+
+function startRound(){
+  S.bal-=D.bet;setBal();
+  track('дуэль: '+fmt(D.bet)+' vs '+D.opp[0]+' · '+(D.pick===1?'вверх':'вниз'));
+  D.state='count';ovShow(null);
+  D.parts=[];D.rings=[];D.flash=0;D.prevLead=null;beat=0;if(AC)nextT=AC.currentTime+0.1;
+  if(S.emo)$('emoBar').style.display='flex';
+  var cnt=3;
+  function cd(){cx.fillStyle='#090D16';cx.fillRect(0,0,W,H);grid();
+    cx.fillStyle=cnt>0?'#EDF1F7':GOLD;cx.font='700 54px sans-serif';cx.textAlign='center';cx.textBaseline='middle';
+    cx.fillText(cnt>0?cnt:'GO',W/2,H/2);
+    if(cnt>0){cnt--;setTimeout(cd,600)}else setTimeout(function(){D.t0=performance.now();D.state='run';requestAnimationFrame(loop)},420)}
+  cd()}
+
+function skinStyle(skin,base){if(skin==='gold')return{line:GOLD,w:3,dot:GOLD};
+  if(skin==='neon')return{line:'#FFFFFF',w:3.5,dot:'#FFFFFF'};
+  return{line:base,w:2.5,dot:null}}
+function valAt(el){var i=el/50,i0=Math.floor(i),i1=Math.min(D.vals.length-1,i0+1),f=i-i0;
+  if(i0>=D.vals.length-1)return D.vals[D.vals.length-1];
+  return D.vals[i0]*(1-f)+D.vals[i1]*f}
+
+function loop(now){
+  if(D.state!=='run')return;
+  var el=now-D.t0,left=Math.max(0,D.dur-el),inCl=left<=D.cl&&left>0,shake=left<=3000&&left>0;
+  var Tm=T(),i;
+  var N=D.vals.length,shown=Math.min(N-1,el/50),dx=W/(N-1);
+  var curV=valAt(Math.min(el,D.dur)),lastX=Math.min(W,shown*dx),lastY=MID-curV;
+  var lead=curV*D.pick>0;
+  if(D.prevLead!==null&&lead!==D.prevLead){var c=lead?Tm.y:Tm.o;
+    for(i=0;i<22;i++)D.parts.push({x:lastX,y:lastY,vx:(Math.random()-0.5)*6,vy:(Math.random()-0.5)*6,l:1,c:c});
+    D.rings.push({x:lastX,y:lastY,r:6,a:0.9,c:c});D.flash=1;D.flashC=c;whoosh();
+    if(!lead&&S.emo&&Math.random()<0.35)oppEmote()}
+  D.prevLead=lead;
+  cx.fillStyle='#090D16';cx.fillRect(0,0,W,H);grid();
+  var meUp=D.pick===1;
+  var aBot=(meUp?lead:!lead)?0.28:0.08,aTop=(meUp?!lead:lead)?0.26:0.07;
+  var cBot=meUp?Tm.y:Tm.o,cTop=meUp?Tm.o:Tm.y;
+  var pts=Math.floor(shown)+1;
+  cx.beginPath();cx.moveTo(0,MID-D.vals[0]);for(i=1;i<pts;i++)cx.lineTo(i*dx,MID-D.vals[i]);cx.lineTo(lastX,lastY);
+  cx.lineTo(lastX,H);cx.lineTo(0,H);cx.closePath();cx.fillStyle=hexA(cBot,aBot);cx.fill();
+  cx.beginPath();cx.moveTo(0,MID-D.vals[0]);for(i=1;i<pts;i++)cx.lineTo(i*dx,MID-D.vals[i]);cx.lineTo(lastX,lastY);
+  cx.lineTo(lastX,0);cx.lineTo(0,0);cx.closePath();cx.fillStyle=hexA(cTop,aTop);cx.fill();
+  cx.strokeStyle='#39466B';cx.setLineDash([5,5]);cx.beginPath();cx.moveTo(0,MID);cx.lineTo(W,MID);cx.stroke();cx.setLineDash([]);
+  cx.strokeStyle='rgba(255,201,77,.4)';cx.beginPath();cx.moveTo(W-1,0);cx.lineTo(W-1,H);cx.stroke();
+  var sk=skinStyle(lead?S.skin:D.oppSkin,inCl?GOLD:'#F2F5FA');
+  cx.beginPath();cx.moveTo(0,MID-D.vals[0]);for(i=1;i<pts;i++)cx.lineTo(i*dx,MID-D.vals[i]);cx.lineTo(lastX,lastY);
+  cx.strokeStyle=inCl&&sk.line==='#F2F5FA'?GOLD:sk.line;cx.lineWidth=sk.w;cx.stroke();cx.lineWidth=1;
+  for(i=D.rings.length-1;i>=0;i--){var rg=D.rings[i];rg.r+=4.5;rg.a-=0.045;
+    if(rg.a<=0){D.rings.splice(i,1);continue}
+    cx.beginPath();cx.arc(rg.x,rg.y,rg.r,0,7);cx.strokeStyle=hexA(rg.c,rg.a);cx.lineWidth=2;cx.stroke();cx.lineWidth=1}
+  for(i=D.parts.length-1;i>=0;i--){var p=D.parts[i];p.x+=p.vx;p.y+=p.vy;p.l-=0.035;
+    if(p.l<=0){D.parts.splice(i,1);continue}
+    cx.fillStyle=hexA(p.c,p.l);cx.fillRect(p.x-2,p.y-2,4,4)}
+  if(D.flash>0){cx.fillStyle=hexA(D.flashC,D.flash*0.14);cx.fillRect(0,0,W,H);D.flash-=0.07}
+  var pr=5+Math.sin(el/120)*1.5;
+  cx.beginPath();cx.arc(lastX,lastY,pr,0,7);cx.fillStyle=sk.dot||(curV>=0?cBot:cTop);cx.fill();
+  cx.strokeStyle='#F2F5FA';cx.stroke();
+  $('dMyAv').style.transform=lead?'scale(1.22)':'scale(.9)';$('dMyAv').style.opacity=lead?'1':'.55';
+  $('dOpAv').style.transform=lead?'scale(.9)':'scale(1.22)';$('dOpAv').style.opacity=lead?'.55':'1';
+  $('dLead').textContent=lead?t('you_lead'):D.opp[0]+' '+t('leads');
+  $('dLead').style.background=lead?Tm.y:Tm.o;$('dLead').style.color=lead?Tm.yD:Tm.oD;
+  $('dClutch').style.display=inCl?'block':'none';
+  $('dWrap').style.borderColor=inCl?(Math.floor(el/300)%2?GOLD:'#222D47'):hexA(lead?Tm.y:Tm.o,0.55);
+  $('dWrap').style.transform=shake?'translate('+((Math.random()-0.5)*1.6)+'px,'+((Math.random()-0.5)*1.6)+'px)':'none';
+  var s=Math.ceil(left/1000);$('dTnum').textContent='0:'+(s<10?'0':'')+s;
+  $('dTnum').style.color=inCl?GOLD:'var(--mut)';
+  $('dTbar').style.width=(left/D.dur*100)+'%';$('dTbar').style.background=inCl?GOLD:(lead?Tm.y:Tm.o);
+  if(left<=0){finish();return}
+  requestAnimationFrame(loop)}
+
+function emoteShow(el,ico){el.className='emfx ti '+ico;el.style.display='block';
+  clearTimeout(el._t);el._t=setTimeout(function(){el.style.display='none'},900)}
+function oppEmote(){var es=['ti-flame','ti-skull','ti-mood-tongue','ti-bolt'];
+  emoteShow($('emoOp'),es[Math.floor(Math.random()*es.length)])}
+$$('.em').forEach(function(b){b.onclick=function(){emoteShow($('emoMe'),b.getAttribute('data-e'));
+  if(Math.random()<0.4)setTimeout(oppEmote,700+Math.random()*800)}});
+
+function finish(){
+  D.state='done';var fin=D.vals[D.vals.length-1],Tm=T();
+  var tie=fin===0,win=fin*D.pick>0;
+  resetHeader();
+  if(tie){S.bal+=D.bet;
+    $('rTitle').textContent=t('tie_t');$('rTitle').style.color='var(--mut)';
+    $('rSub').textContent=t('tie_d')}
+  else if(win){var g=bankVal();S.bal+=g;S.wins++;S.streak++;if(S.streak>S.rec)S.rec=S.streak;
+    if(g-D.bet>S.best)S.best=Math.round((g-D.bet)*100)/100;
+    S.elo+=25;sting(true);
+    $('rTitle').textContent=t('win')+'  +'+fmt(g);$('rTitle').style.color=Tm.y;
+    $('rSub').innerHTML=t('your_streak',{s:S.streak})+(S.streak===S.rec&&S.streak>1?t('new_rec'):'')+' · '+t('wants_re',{n:D.opp[0]})}
+  else{S.losses++;S.elo=Math.max(700,S.elo-25);sting(false);
+    var shielded=S.sk.sh>0&&S.streak>0;
+    if(shielded){S.sk.sh--;
+      $('rSub').innerHTML='<span style="color:'+Tm.y+'">'+t('shield_saved',{s:S.streak})+'</span> · '+t('wants_re',{n:D.opp[0]})}
+    else{S.streak=0;$('rSub').textContent=t('took_bank',{n:D.opp[0]})}
+    $('rTitle').textContent=t('lose')+'  −'+fmt(D.bet);$('rTitle').style.color=Tm.o}
+  S.hist.unshift({o:D.opp[0],b:D.bet,r:tie?'=':(win?'w':'l'),d:Date.now()});
+  if(S.hist.length>20)S.hist.pop();
+  setBal();save();updSkills();
+  track((tie?'ничья':(win?'победа +'+fmt(bankVal()):'поражение −'+fmt(D.bet)))+' vs '+D.opp[0]+' · баланс '+fmt(S.bal)+' · серия '+S.streak);
+  drawCard(win,tie);
+  $('rFair').textContent=t('seed_line',{s:D.seed})+(D.hash?t('fair_ok'):'');
+  showResult();
+  $('dMySub').innerHTML=S.streak>0?'<i class="ti ti-flame" style="font-size:11px;color:'+GOLD+'"></i> '+S.streak+' '+t('ser'):divName(S.elo)}
+
+function drawCard(win,tie){
+  var c=$('rCard'),g=c.getContext('2d'),Tm=T();
+  g.fillStyle='#0B0F1A';g.fillRect(0,0,340,170);
+  g.strokeStyle=win?(S.skin==='gold'?GOLD:Tm.y):Tm.o;g.lineWidth=3;g.strokeRect(1.5,1.5,337,167);
+  g.fillStyle='#EDF1F7';g.font='700 20px sans-serif';g.textAlign='left';
+  g.fillText('RE',16,32);g.fillStyle=Tm.y;g.fillText('DUEL',44,32);
+  g.fillStyle=win?Tm.y:(tie?'#8A93A6':Tm.o);g.font='700 26px sans-serif';
+  g.fillText(tie?t('card_tie'):(win?t('card_win'):t('card_lose')),16,78);
+  g.fillStyle='#EDF1F7';g.font='500 15px sans-serif';
+  g.fillText(S.nick+'  vs  '+D.opp[0],16,106);
+  g.fillStyle=GOLD;g.font='700 22px sans-serif';
+  g.fillText(tie?fmt(0):(win?'+'+fmt(bankVal()):'−'+fmt(D.bet)),16,136);
+  g.fillStyle='#8A93A6';g.font='400 11px sans-serif';
+  g.fillText(t('card_call')+S.ref,16,158)}
+
+function actClick(e){var b=e.target.closest?e.target.closest('[data-act]'):null;if(!b)return;
+  var n=b.getAttribute('data-n');
+  if(b.getAttribute('data-act')==='ch')challenge(n);else addFriend(n)}
+function challenge(n){
+  if(busy()){toast(t('busy_duel'));return}
+  D.forced=findBot(n);nav('s-duel');
+  D.state='setup';showGame();ovShow('dSetup');drawIdle();resetHeader();
+  toast(t('chal_for',{n:n}))}
+function addFriend(n){
+  if(S.friends.indexOf(n)>=0){toast(t('fr_already',{n:n}));return}
+  if(S.freq.indexOf(n)>=0){toast(t('fr_pending',{n:n}));return}
+  S.freq.push(n);save();toast(t('fr_sent',{n:n}));
+  if(scr==='s-invite')renderInv();
+  setTimeout(function(){var i=S.freq.indexOf(n);if(i<0)return;
+    S.freq.splice(i,1);S.friends.push(n);save();
+    toast(t('fr_ok',{n:n}));
+    if(scr==='s-invite')renderInv();if(scr==='s-prof')renderProf()},6000+Math.random()*9000)}
+
+var rateDiv=null;
+function renderRate(){
+  var myD=divName(S.elo);
+  if(rateDiv===null)rateDiv=myD;
+  $('myDiv').textContent=myD;
+  var all=BOTS.map(function(b){return{n:b[0],e:b[1],s:b[2],me:false}});
+  all.push({n:S.nick,e:S.elo,s:S.streak,me:true});
+  all.sort(function(a,b){return b.e-a.e});
+  var myPos=all.findIndex(function(x){return x.me})+1;
+  $('myEloLine').textContent=S.elo+' '+t('pts')+' · #'+myPos+' '+t('of')+' '+all.length;
+  var nx=divNext(S.elo);
+  if(nx){var base=0,i;for(i=0;i<DIVS.length;i++)if(S.elo>=DIVS[i][1])base=DIVS[i][1];
+    var pr=Math.round((S.elo-base)/(nx[1]-base)*100);
+    $('myProgTxt').textContent=t('to_div',{d:nx[0],p:pr});$('myProg').style.width=pr+'%'}
+  else{$('myProgTxt').textContent=t('max_div');$('myProg').style.width='100%'}
+  var lad='';DIVS.forEach(function(d){
+    lad+='<button class="dv'+(d[0]===rateDiv?' sel':'')+(d[0]===myD?' mine':'')+'" data-dv="'+d[0]+'">'+d[0]+'</button>'});
+  $('divLadder').innerHTML=lad;
+  var canAct=divIdx(rateDiv)<=divIdx(myD);
+  function actBtns(n){return '<span class="row" style="gap:4px"><button class="fb" data-act="ch" data-n="'+n+'" title="'+t('t_chal')+'"><i class="ti ti-swords"></i></button><button class="fb" data-act="fr" data-n="'+n+'" title="'+t('t_fr')+'"><i class="ti ti-user-plus"></i></button></span>'}
+  var list=all.filter(function(x){return divName(x.e)===rateDiv});
+  var html='';
+  list.forEach(function(x,j){
+    var right=x.me?'<span class="mut">'+x.e+' ELO</span>':(canAct?actBtns(x.n):'<span class="row" style="gap:6px"><span class="mut" style="font-size:11px">'+x.e+' ELO</span><span class="badge">'+t('spectate')+'</span></span>');
+    html+='<div class="listrow"'+(x.me?' style="border:1px solid var(--y)"':'')+'><span><span style="color:'+(x.me?'var(--y)':'var(--gold)')+';font-weight:700">'+(j+1)+'</span> · '+x.n+' <span class="mut" style="font-size:11px">'+x.s+' '+t('ser')+'</span></span>'+right+'</div>'});
+  $('topList').innerHTML=html}
+$('divLadder').addEventListener('click',function(e){
+  var b=e.target.closest?e.target.closest('[data-dv]'):null;if(!b)return;
+  rateDiv=b.getAttribute('data-dv');renderRate()});
+$('topList').addEventListener('click',actClick);
+
+function renderProf(){
+  $('pNick').textContent=S.nick;$('pAv').textContent=S.nick.slice(0,2).toUpperCase();
+  $('pDiv').textContent=divName(S.elo)+' · '+S.elo+' ELO';
+  $('pStreak').textContent=S.streak;
+  $('stG').textContent=S.wins+S.losses;
+  $('stF').textContent=S.friends.length;
+  $('stR').textContent=S.rec;$('stB').textContent='$'+S.best;
+  if(S.hist.length){var h='';S.hist.forEach(function(x){
+    var col=x.r==='w'?'var(--y)':(x.r==='='?'var(--mut)':'var(--o)');
+    var txt=x.r==='w'?'+'+fmt(x.b*2*0.95-x.b):(x.r==='='?t('tie_t'):'−'+fmt(x.b));
+    h+='<div class="listrow"><span>vs '+x.o+'</span><span style="color:'+col+';font-weight:600">'+txt+'</span></div>'});
+    $('histList').innerHTML=h}
+  else $('histList').innerHTML='<div class="card mut" style="font-size:12px;text-align:center">'+t('no_duels')+'</div>'}
+
+function renderInv(){$('refLink').textContent=S.ref;
+  var h='';
+  S.friends.forEach(function(n){h+='<div class="listrow"><span><i class="ti ti-user" style="color:var(--y)"></i> '+n+'</span><button class="fb" data-act="ch" data-n="'+n+'"><i class="ti ti-swords"></i> '+t('call')+'</button></div>'});
+  S.freq.forEach(function(n){h+='<div class="listrow"><span><i class="ti ti-user" style="color:var(--mut)"></i> '+n+'</span><span class="badge">'+t('req_sent')+'</span></div>'});
+  if(!h)h='<div class="card mut" style="font-size:12px;text-align:center">'+t('inv_empty')+'</div>';
+  $('invList').innerHTML=h}
+$('invList').addEventListener('click',actClick);
+$('refCopy').onclick=function(){copyTxt('https://'+S.ref,t('link_copied'));track('скопировал реф-ссылку')};
+$('invChal').onclick=function(){copyTxt(t('chal_txt')+' https://'+S.ref+'_duel',t('chal_copied'));track('скопировал вызов другу')};
+
+function updSkills(){
+  $('ownSh').textContent=S.sk.sh;
+  $('buyGold').innerHTML=S.skins.gold?(S.skin==='gold'?t('equipped'):t('equip')):'$2';
+  $('buyGold').classList.toggle('sel',S.skin==='gold');
+  $('buyNeon').innerHTML=S.skins.neon?(S.skin==='neon'?t('equipped'):t('equip')):'$2';
+  $('buyNeon').classList.toggle('sel',S.skin==='neon');
+  $('buyEmo').innerHTML=S.emo?t('owned'):'$2';
+  var h='';
+  if(S.sk.sh>0)h+='<span class="badge" style="color:var(--y)"><i class="ti ti-shield-check"></i> ×'+S.sk.sh+'</span>';
+  if(S.skin==='gold')h+='<span class="badge" style="color:var(--gold)"><i class="ti ti-sparkles"></i> Gold Rush</span>';
+  if(S.skin==='neon')h+='<span class="badge" style="color:#fff"><i class="ti ti-ghost"></i> Neon Ghost</span>';
+  if(S.emo)h+='<span class="badge" style="color:var(--o)"><i class="ti ti-mood-tongue"></i></span>';
+  $('skillRow').innerHTML=h?('<span class="mut" style="font-size:10px">'+t('my_sk')+'</span>'+h):''}
+$('buySh').onclick=function(){if(S.bal<3){toast(t('no_funds'));return}
+  S.bal-=3;S.sk.sh++;setBal();updSkills();toast(t('bought'));track('купил щит серии')};
+function skinBtn(key){
+  if(!S.skins[key]){if(S.bal<2){toast(t('no_funds'));return}
+    S.bal-=2;S.skins[key]=true;S.skin=key;setBal();toast(t('bought'));track('купил скин '+key)}
+  else S.skin=S.skin===key?'none':key;
+  save();updSkills()}
+$('buyGold').onclick=function(){skinBtn('gold')};
+$('buyNeon').onclick=function(){skinBtn('neon')};
+$('buyEmo').onclick=function(){if(S.emo)return;
+  if(S.bal<2){toast(t('no_funds'));return}
+  S.bal-=2;S.emo=true;setBal();updSkills();toast(t('bought'))};
+
+var wDepTab=true;
+function wTab(dep){wDepTab=dep;
+  $('wTabDep').classList.toggle('sel',dep);$('wTabWd').classList.toggle('sel',!dep);
+  $('wDep').style.display=dep?'block':'none';$('wWd').style.display=dep?'none':'block'}
+$('wTabDep').onclick=function(){wTab(true)};
+$('wTabWd').onclick=function(){wTab(false)};
+$$('.wnet').forEach(function(b){b.onclick=function(){$$('.wnet').forEach(function(x){x.classList.remove('sel')});b.classList.add('sel')}});
+var depAmt=25;
+$$('.wamt').forEach(function(b){b.onclick=function(){depAmt=+b.getAttribute('data-a');$('depCust').value='';
+  $$('.wamt').forEach(function(x){x.classList.remove('sel')});b.classList.add('sel')}});
+$('depCust').oninput=function(){var v=Math.max(1,Math.floor(+this.value||0));
+  if(v>=1){depAmt=v;$$('.wamt').forEach(function(x){x.classList.remove('sel')})}};
+$('depCopy').onclick=function(){copyTxt('UQDreduel_demo_9f3kx7Lq',t('addr_copied'))};
+$('depPaid').onclick=function(){S.bal+=depAmt;
+  S.tx.unshift({t:'in',a:depAmt,st:'done',d:Date.now(),m:'dep'});
+  setBal();renderTx();toast('+'+fmt(depAmt)+' '+t('added'));
+  track('демо-депозит +'+fmt(depAmt))};
+$('wdGo').onclick=function(){var a=Math.floor((+$('wdAmt').value||0)*100)/100,ad=$('wdAddr').value.trim();
+  if(a<10){toast(t('min_wd'));return}
+  if(a>S.bal){toast(t('no_funds'));return}
+  if(ad.length<8){toast(t('need_addr'));return}
+  S.bal-=a;var tx={t:'out',a:a,st:'proc',d:Date.now(),m:'wd',ad:ad.slice(0,6)};
+  S.tx.unshift(tx);setBal();renderTx();toast(t('wd_created'));
+  track('заявка на вывод '+fmt(a));
+  $('wdAmt').value='';$('wdAddr').value='';
+  setTimeout(function(){tx.st='done';save();if(scr==='s-wallet')renderTx();toast(t('wd_done',{a:fmt(a)}))},3500)};
+function renderTx(){setBal();
+  if(!S.tx.length){$('txList').innerHTML='<div class="card mut" style="font-size:12px;text-align:center">'+t('tx_none')+'</div>';return}
+  var h='';S.tx.slice(0,15).forEach(function(x){
+    var col=x.t==='in'?'var(--y)':'var(--o)';
+    var m=x.m==='dep'?t('tx_dep'):t('tx_wd',{a:x.ad||''});
+    h+='<div class="listrow"><span><span style="color:'+col+';font-weight:600">'+(x.t==='in'?'+':'−')+fmt(x.a)+'</span> <span class="mut" style="font-size:11px">'+m+'</span></span><span class="badge">'+t(x.st==='done'?'st_done':'st_proc')+'</span></div>'});
+  $('txList').innerHTML=h}
+
+var names=['ALINA','MAX_W','LIRA','DANTE','KOT_9','MURA','ZED','FURY','LUNA','GROM'];
+function feedMsg(){var n=names[Math.floor(Math.random()*names.length)],m=names[Math.floor(Math.random()*names.length)],r=Math.random(),txt;
+  if(r<0.3)txt=t('f_win',{n:n,a:Math.floor(Math.random()*140)+8,m:m});
+  else if(r<0.55)txt=t('f_ser',{n:n,s:Math.floor(Math.random()*12)+2});
+  else if(r<0.7)txt=t('f_clutch',{n:n});
+  else if(r<0.82)return '<span>'+t('f_online',{a:1200+Math.floor(Math.random()*99)})+'</span>';
+  else{n='LUNA';txt=t('f_rec')}
+  return '<span>'+txt+'</span><button class="fb" data-act="ch" data-n="'+n+'" title="'+t('t_chal')+'"><i class="ti ti-swords"></i></button><button class="fb" data-act="fr" data-n="'+n+'" title="'+t('t_fr')+'"><i class="ti ti-user-plus"></i></button>'}
+var feedEls=[$('feed'),$('feed2')];
+feedEls.forEach(function(el){el.innerHTML=feedMsg();el.addEventListener('click',actClick)});
+setInterval(function(){var h=feedMsg();
+  feedEls.forEach(function(el){el.style.opacity=0;
+    setTimeout(function(){el.innerHTML=h;el.style.opacity=1},250)})},2600);
+function liveRow(){var a=names[Math.floor(Math.random()*names.length)],b=names[Math.floor(Math.random()*names.length)];
+  return '<div class="listrow"><span>'+a+' <span class="mut">vs</span> '+b+'</span><span style="color:var(--gold);font-weight:600">$'+(Math.floor(Math.random()*46)+4)+'</span></div>'}
+function fillLive(){$('liveList').innerHTML=liveRow()+liveRow()+liveRow()}
+fillLive();setInterval(fillLive,3200);
+setInterval(function(){$('onlineN').textContent=(1200+Math.floor(Math.random()*99)).toLocaleString()},4000);
+
+updBank();
+boot();
+})();
+</script>
+</body>
+</html>
