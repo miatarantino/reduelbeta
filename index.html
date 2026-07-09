@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>REDUEL</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.30.0/dist/tabler-icons.min.css">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{--bg:#0B0F1A;--panel:#141B2D;--panel2:#1A2338;--line:#222D47;--mut:#8A93A6;--txt:#EDF1F7;--gold:#FFC94D;--goldD:#412402;--y:#2FE0C8;--yD:#04342C;--yBg:#0F3B36;--o:#F45E93;--oD:#4B1528;--oBg:#421A2C}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -925,6 +926,18 @@ function fillLive(){$('liveList').innerHTML=liveRow()+liveRow()+liveRow()}
 fillLive();setInterval(fillLive,3200);
 setInterval(function(){$('onlineN').textContent=(1200+Math.floor(Math.random()*99)).toLocaleString()},4000);
 
+try{var tw=window.Telegram&&window.Telegram.WebApp;
+  if(tw&&tw.initDataUnsafe&&tw.initData){
+    tw.ready();tw.expand();
+    if(tw.setHeaderColor)tw.setHeaderColor('#0B0F1A');
+    if(tw.setBackgroundColor)tw.setBackgroundColor('#07090F');
+    if(tw.enableClosingConfirmation)tw.enableClosingConfirmation();
+    var tu=tw.initDataUnsafe.user;
+    if(tu&&!S.reg){
+      var lc=(tu.language_code||'').slice(0,2);
+      S.lang=(lc==='ru'||lc==='uk')?lc:'en';
+      if(tu.username)$('regNick').value=tu.username.replace(/[^A-Za-z0-9._]/g,'').slice(0,14)}
+    track('открыл через Telegram mini app')}}catch(e){}
 updBank();
 boot();
 })();
