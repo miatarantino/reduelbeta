@@ -332,6 +332,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield}
   </div>
   <div class="sec" data-i="fair_t"></div>
   <div class="card mut" style="font-size:12px;line-height:1.6" data-i="fair_d"></div>
+  <div class="mut" style="font-size:10px;text-align:center;margin-top:10px" id="verLine">—</div>
 </div>
 
 <div id="s-wallet" class="scr">
@@ -441,7 +442,7 @@ function applyLang(){document.documentElement.lang=S.lang;
   sndIco();updSkills();save()}
 
 var S={reg:false,nick:'',theme:0,lang:'ru',snd:true,bal:0,elo:1000,streak:0,rec:0,wins:0,losses:0,best:0,hist:[],tx:[],ref:'',refBy:'',friends:[],freq:[],sk:{sh:0},skins:{gold:false,neon:false},skin:'none',emo:false};
-var BOT='Reduelbeta_bot';
+var BOT='Reduelbeta_bot',APP_V='0.9.4';
 function save(){try{localStorage.setItem('reduel_v2',JSON.stringify(S))}catch(e){}cloudSave()}
 var cloudT=null;
 function cloudSave(){try{var tw=window.Telegram&&window.Telegram.WebApp;
@@ -835,6 +836,7 @@ $('divLadder').addEventListener('click',function(e){
 $('topList').addEventListener('click',actClick);
 
 function renderProf(){
+  $('verLine').textContent='REDUEL beta v'+APP_V;
   $('pNick').textContent=S.nick;$('pAv').textContent=S.nick.slice(0,2).toUpperCase();
   $('pDiv').textContent=divName(S.elo)+' · '+S.elo+' ELO';
   $('pStreak').textContent=S.streak;
